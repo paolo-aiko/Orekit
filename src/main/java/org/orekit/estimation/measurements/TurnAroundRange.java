@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -65,48 +65,6 @@ public class TurnAroundRange extends AbstractMeasurement<TurnAroundRange> {
     private final GroundStation slaveStation;
 
     /** Simple constructor.
-     * <p>
-     * This constructor uses 0 as the index of the propagator related
-     * to this measurement, thus being well suited for mono-satellite
-     * orbit determination.
-     * </p>
-     * @param masterStation ground station from which measurement is performed
-     * @param slaveStation ground station reflecting the signal
-     * @param date date of the measurement
-     * @param turnAroundRange observed value
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @deprecated as of 9.3, replaced by {@link #TurnAroundRange(GroundStation, GroundStation, AbsoluteDate,
-     * double, double, double, ObservableSatellite)}
-     */
-    @Deprecated
-    public TurnAroundRange(final GroundStation masterStation, final GroundStation slaveStation,
-                           final AbsoluteDate date, final double turnAroundRange,
-                           final double sigma, final double baseWeight) {
-        this(masterStation, slaveStation, date, turnAroundRange, sigma, baseWeight, new ObservableSatellite(0));
-    }
-
-    /** Simple constructor.
-     * @param masterStation ground station from which measurement is performed
-     * @param slaveStation ground station reflecting the signal
-     * @param date date of the measurement
-     * @param turnAroundRange observed value
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @param propagatorIndex index of the propagator related to this measurement
-     * @since 9.0
-     * @deprecated as of 9.3, replaced by {@link #TurnAroundRange(GroundStation, GroundStation, AbsoluteDate,
-     * double, double, double, ObservableSatellite)}
-     */
-    @Deprecated
-    public TurnAroundRange(final GroundStation masterStation, final GroundStation slaveStation,
-                           final AbsoluteDate date, final double turnAroundRange,
-                           final double sigma, final double baseWeight,
-                           final int propagatorIndex) {
-        this(masterStation, slaveStation, date, turnAroundRange, sigma, baseWeight, new ObservableSatellite(propagatorIndex));
-    }
-
-    /** Simple constructor.
      * @param masterStation ground station from which measurement is performed
      * @param slaveStation ground station reflecting the signal
      * @param date date of the measurement
@@ -164,8 +122,7 @@ public class TurnAroundRange extends AbstractMeasurement<TurnAroundRange> {
     protected EstimatedMeasurement<TurnAroundRange> theoreticalEvaluation(final int iteration, final int evaluation,
                                                                           final SpacecraftState[] states) {
 
-        final ObservableSatellite satellite = getSatellites().get(0);
-        final SpacecraftState     state     = states[satellite.getPropagatorIndex()];
+        final SpacecraftState state = states[0];
 
         // Turn around range derivatives are computed with respect to:
         // - Spacecraft state in inertial frame

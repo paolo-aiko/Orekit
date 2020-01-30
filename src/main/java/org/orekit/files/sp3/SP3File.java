@@ -1,5 +1,5 @@
 /* Copyright 2002-2012 Space Applications Services
- * Licensed to CS Systèmes d'Information (CS) under one or more
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -81,7 +82,7 @@ public class SP3File implements EphemerisFile {
          * @return the type corresponding to the string
          */
         public static SP3OrbitType parseType(final String s) {
-            final String normalizedString = s.trim().toUpperCase();
+            final String normalizedString = s.trim().toUpperCase(Locale.US);
             if ("EST".equals(normalizedString)) {
                 return FIT;
             } else if ("BHN".equals(normalizedString)) {
@@ -190,7 +191,6 @@ public class SP3File implements EphemerisFile {
      * @param mu                   is the standard gravitational parameter in m^3 / s^2.
      * @param interpolationSamples number of samples to use in interpolation.
      * @param frameBuilder         for constructing a reference frame from the identifier
-     *                             in the file.
      */
     SP3File(final double mu,
             final int interpolationSamples,
@@ -388,14 +388,6 @@ public class SP3File implements EphemerisFile {
      */
     public SP3OrbitType getOrbitType() {
         return orbitType;
-    }
-
-    /** Set the {@link SP3OrbitType} for this SP3 file.
-     * @param oType the orbit type to be set
-     * @deprecated as of 9.4, replaced by {@link #setOrbitTypeKey(String)}
-     */
-    void setOrbitType(final SP3OrbitType oType) {
-        this.orbitType = oType;
     }
 
     /** Returns the orbit type key for this SP3 file.

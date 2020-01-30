@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -18,6 +18,7 @@ package org.orekit.propagation.events;
 
 import java.util.ArrayList;
 
+import org.hipparchus.ode.events.Action;
 import org.orekit.errors.OrekitIllegalArgumentException;
 import org.hipparchus.RealFieldElement;
 import org.orekit.errors.OrekitMessages;
@@ -35,8 +36,7 @@ import org.orekit.time.FieldTimeStamped;
  *   <li>several dates can be added ({@link #addEventDate(FieldAbsoluteDate)})</li>
  * </ul>
  * <p>The gap between the added dates must be more than the maxCheck.</p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.FieldEventHandler.Action#STOP stop}
+ * <p>The default implementation behavior is to {@link Action#STOP stop}
  * propagation at the first event date occurrence. This can be changed by calling
  * {@link #withHandler(FieldEventHandler)} after construction.</p>
  * @see org.orekit.propagation.FieldPropagator#addEventDetector(FieldEventDetector)

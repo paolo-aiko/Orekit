@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orekit.errors.OrekitInternalError;
 import org.orekit.estimation.measurements.EstimatedMeasurement;
+import org.orekit.estimation.measurements.ObservableSatellite;
 import org.orekit.estimation.measurements.ObservedMeasurement;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.sampling.MultiSatStepHandler;
@@ -34,7 +35,7 @@ import org.orekit.time.AbsoluteDate;
 class MeasurementHandler implements MultiSatStepHandler {
 
     /** Least squares model. */
-    private final Model model;
+    private final BatchLSODModel model;
 
     /** Underlying measurements. */
     private final List<PreCompensation> precompensated;
@@ -49,12 +50,10 @@ class MeasurementHandler implements MultiSatStepHandler {
      * @param model least squares model
      * @param precompensated underlying measurements
      */
-    MeasurementHandler(final Model model, final List<PreCompensation> precompensated) {
+    MeasurementHandler(final BatchLSODModel model, final List<PreCompensation> precompensated) {
         this.model          = model;
         this.precompensated = precompensated;
     }
-
-    /**
 
     /** {@inheritDoc} */
     @Override
@@ -92,7 +91,8 @@ class MeasurementHandler implements MultiSatStepHandler {
             // estimate the theoretical measurement
             final SpacecraftState[] states = new SpacecraftState[observed.getSatellites().size()];
             for (int i = 0; i < states.length; ++i) {
-                states[i] = interpolators.get(i).getInterpolatedState(next.getDate());
+                final ObservableSatellite satellite = observed.getSatellites().get(i);
+                states[i] = interpolators.get(satellite.getPropagatorIndex()).getInterpolatedState(next.getDate());
             }
             final EstimatedMeasurement<?> estimated = observed.estimate(model.getIterationsCount(),
                                                                         model.getEvaluationsCount(),

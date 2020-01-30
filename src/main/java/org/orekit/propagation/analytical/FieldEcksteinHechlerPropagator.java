@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -23,7 +23,10 @@ import org.hipparchus.analysis.differentiation.FieldDerivativeStructure;
 import org.hipparchus.geometry.euclidean.threed.FieldVector3D;
 import org.hipparchus.util.FastMath;
 import org.hipparchus.util.MathArrays;
+import org.hipparchus.util.MathUtils;
+import org.orekit.annotation.DefaultDataContext;
 import org.orekit.attitudes.AttitudeProvider;
+import org.orekit.data.DataContext;
 import org.orekit.errors.OrekitException;
 import org.orekit.errors.OrekitMessages;
 import org.orekit.forces.gravity.potential.UnnormalizedSphericalHarmonicsProvider;
@@ -33,6 +36,7 @@ import org.orekit.orbits.FieldOrbit;
 import org.orekit.orbits.OrbitType;
 import org.orekit.orbits.PositionAngle;
 import org.orekit.propagation.FieldSpacecraftState;
+import org.orekit.propagation.Propagator;
 import org.orekit.time.FieldAbsoluteDate;
 import org.orekit.utils.FieldTimeSpanMap;
 import org.orekit.utils.TimeStampedFieldPVCoordinates;
@@ -61,25 +65,32 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
     private double referenceRadius;
 
     /** Central attraction coefficient (m³/s²). */
-    private double mu;
+    private T mu;
 
     /** Un-normalized zonal coefficients. */
     private double[] ck0;
 
-    /** Build a propagator from FieldOrbit<T> and potential provider.
+    /** Build a propagator from FieldOrbit and potential provider.
      * <p>Mass and attitude provider are set to unspecified non-null arbitrary values.</p>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * <p>This constructor uses the {@link DataContext#getDefault() default data context}.
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param provider for un-normalized zonal coefficients
+     * @see #FieldEcksteinHechlerPropagator(FieldOrbit, AttitudeProvider,
+     * UnnormalizedSphericalHarmonicsProvider)
      */
+    @DefaultDataContext
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit,
                                           final UnnormalizedSphericalHarmonicsProvider provider) {
-        this(initialOrbit, DEFAULT_LAW, initialOrbit.getA().getField().getZero().add(DEFAULT_MASS), provider,
+        this(initialOrbit, Propagator.getDefaultLaw(DataContext.getDefault().getFrames()),
+             initialOrbit.getA().getField().getZero().add(DEFAULT_MASS), provider,
              provider.onDate(initialOrbit.getDate().toAbsoluteDate()));
     }
 
     /**
      * Private helper constructor.
-     * @param initialOrbit initial FieldOrbit<T>
+     * @param initialOrbit initial FieldOrbit
      * @param attitude attitude provider
      * @param mass spacecraft mass
      * @param provider for un-normalized zonal coefficients
@@ -90,7 +101,7 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
                                           final T mass,
                                           final UnnormalizedSphericalHarmonicsProvider provider,
                                           final UnnormalizedSphericalHarmonicsProvider.UnnormalizedSphericalHarmonics harmonics) {
-        this(initialOrbit, attitude,  mass, provider.getAe(), provider.getMu(),
+        this(initialOrbit, attitude,  mass, provider.getAe(), initialOrbit.getA().getField().getZero().add(provider.getMu()),
              harmonics.getUnnormalizedCnm(2, 0),
              harmonics.getUnnormalizedCnm(3, 0),
              harmonics.getUnnormalizedCnm(4, 0),
@@ -98,18 +109,21 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
              harmonics.getUnnormalizedCnm(6, 0));
     }
 
-    /** Build a propagator from FieldOrbit<T> and potential.
+    /** Build a propagator from FieldOrbit and potential.
      * <p>Mass and attitude provider are set to unspecified non-null arbitrary values.</p>
      * <p>The C<sub>n,0</sub> coefficients are the denormalized zonal coefficients, they
      * are related to both the normalized coefficients
      * <span style="text-decoration: overline">C</span><sub>n,0</sub>
-     *  and the J<sub>n</sub> one as follows:</p>
-     * <pre>
+     *  and the J<sub>n</sub> one as follows:
+     * <p>
      *   C<sub>n,0</sub> = [(2-δ<sub>0,m</sub>)(2n+1)(n-m)!/(n+m)!]<sup>½</sup>
      *                      <span style="text-decoration: overline">C</span><sub>n,0</sub>
+     * <p>
      *   C<sub>n,0</sub> = -J<sub>n</sub>
-     * </pre>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * <p>This constructor uses the {@link DataContext#getDefault() default data context}.
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param referenceRadius reference radius of the Earth for the potential model (m)
      * @param mu central attraction coefficient (m³/s²)
      * @param c20 un-normalized zonal coefficient (about -1.08e-3 for Earth)
@@ -117,39 +131,53 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
      * @param c40 un-normalized zonal coefficient (about +1.62e-6 for Earth)
      * @param c50 un-normalized zonal coefficient (about +2.28e-7 for Earth)
      * @param c60 un-normalized zonal coefficient (about -5.41e-7 for Earth)
-          * @see org.orekit.utils.Constants
+     * @see org.orekit.utils.Constants
+     * @see #FieldEcksteinHechlerPropagator(FieldOrbit, AttitudeProvider, double,
+     * RealFieldElement, double, double, double, double, double)
      */
+    @DefaultDataContext
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit,
-                                          final double referenceRadius, final double mu,
+                                          final double referenceRadius, final T mu,
                                           final double c20, final double c30, final double c40,
                                           final double c50, final double c60) {
-        this(initialOrbit, DEFAULT_LAW, initialOrbit.getDate().getField().getZero().add(DEFAULT_MASS),
+        this(initialOrbit, Propagator.getDefaultLaw(DataContext.getDefault().getFrames()),
+             initialOrbit.getDate().getField().getZero().add(DEFAULT_MASS),
              referenceRadius, mu, c20, c30, c40, c50, c60);
     }
 
-    /** Build a propagator from FieldOrbit<T>, mass and potential provider.
+    /** Build a propagator from FieldOrbit, mass and potential provider.
      * <p>Attitude law is set to an unspecified non-null arbitrary value.</p>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * <p>This constructor uses the {@link DataContext#getDefault() default data context}.
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param mass spacecraft mass
      * @param provider for un-normalized zonal coefficients
+     * @see #FieldEcksteinHechlerPropagator(FieldOrbit, AttitudeProvider,
+     * RealFieldElement, UnnormalizedSphericalHarmonicsProvider)
      */
+    @DefaultDataContext
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit, final T mass,
                                           final UnnormalizedSphericalHarmonicsProvider provider) {
-        this(initialOrbit, DEFAULT_LAW, mass, provider, provider.onDate(initialOrbit.getDate().toAbsoluteDate()));
+        this(initialOrbit, Propagator.getDefaultLaw(DataContext.getDefault().getFrames()),
+                mass, provider, provider.onDate(initialOrbit.getDate().toAbsoluteDate()));
     }
 
-    /** Build a propagator from FieldOrbit<T>, mass and potential.
+    /** Build a propagator from FieldOrbit, mass and potential.
      * <p>Attitude law is set to an unspecified non-null arbitrary value.</p>
      * <p>The C<sub>n,0</sub> coefficients are the denormalized zonal coefficients, they
      * are related to both the normalized coefficients
      * <span style="text-decoration: overline">C</span><sub>n,0</sub>
      *  and the J<sub>n</sub> one as follows:</p>
-     * <pre>
+     * <p>
      *   C<sub>n,0</sub> = [(2-δ<sub>0,m</sub>)(2n+1)(n-m)!/(n+m)!]<sup>½</sup>
      *                      <span style="text-decoration: overline">C</span><sub>n,0</sub>
+     * <p>
      *   C<sub>n,0</sub> = -J<sub>n</sub>
-     * </pre>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * <p>This constructor uses the {@link DataContext#getDefault() default data context}.
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param mass spacecraft mass
      * @param referenceRadius reference radius of the Earth for the potential model (m)
      * @param mu central attraction coefficient (m³/s²)
@@ -158,17 +186,21 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
      * @param c40 un-normalized zonal coefficient (about +1.62e-6 for Earth)
      * @param c50 un-normalized zonal coefficient (about +2.28e-7 for Earth)
      * @param c60 un-normalized zonal coefficient (about -5.41e-7 for Earth)
+     * @see #FieldEcksteinHechlerPropagator(FieldOrbit, AttitudeProvider,
+     * RealFieldElement, double, RealFieldElement, double, double, double, double, double)
      */
+    @DefaultDataContext
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit, final T mass,
-                                          final double referenceRadius, final double mu,
+                                          final double referenceRadius, final T mu,
                                           final double c20, final double c30, final double c40,
                                           final double c50, final double c60) {
-        this(initialOrbit, DEFAULT_LAW, mass, referenceRadius, mu, c20, c30, c40, c50, c60);
+        this(initialOrbit, Propagator.getDefaultLaw(DataContext.getDefault().getFrames()),
+                mass, referenceRadius, mu, c20, c30, c40, c50, c60);
     }
 
-    /** Build a propagator from FieldOrbit<T>, attitude provider and potential provider.
+    /** Build a propagator from FieldOrbit, attitude provider and potential provider.
      * <p>Mass is set to an unspecified non-null arbitrary value.</p>
-     * @param initialOrbit initial FieldOrbit<T>
+     * @param initialOrbit initial FieldOrbit
      * @param attitudeProv attitude provider
      * @param provider for un-normalized zonal coefficients
      */
@@ -178,18 +210,19 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
         this(initialOrbit, attitudeProv, initialOrbit.getA().getField().getZero().add(DEFAULT_MASS), provider, provider.onDate(initialOrbit.getDate().toAbsoluteDate()));
     }
 
-    /** Build a propagator from FieldOrbit<T>, attitude provider and potential.
+    /** Build a propagator from FieldOrbit, attitude provider and potential.
      * <p>Mass is set to an unspecified non-null arbitrary value.</p>
      * <p>The C<sub>n,0</sub> coefficients are the denormalized zonal coefficients, they
      * are related to both the normalized coefficients
      * <span style="text-decoration: overline">C</span><sub>n,0</sub>
      *  and the J<sub>n</sub> one as follows:</p>
-     * <pre>
+     * <p>
      *   C<sub>n,0</sub> = [(2-δ<sub>0,m</sub>)(2n+1)(n-m)!/(n+m)!]<sup>½</sup>
      *                     <span style="text-decoration: overline">C</span><sub>n,0</sub>
+     * <p>
      *   C<sub>n,0</sub> = -J<sub>n</sub>
-     * </pre>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param attitudeProv attitude provider
      * @param referenceRadius reference radius of the Earth for the potential model (m)
      * @param mu central attraction coefficient (m³/s²)
@@ -201,15 +234,15 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
      */
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit,
                                           final AttitudeProvider attitudeProv,
-                                          final double referenceRadius, final double mu,
+                                          final double referenceRadius, final T mu,
                                           final double c20, final double c30, final double c40,
                                           final double c50, final double c60) {
         this(initialOrbit, attitudeProv, initialOrbit.getDate().getField().getZero().add(DEFAULT_MASS),
              referenceRadius, mu, c20, c30, c40, c50, c60);
     }
 
-    /** Build a propagator from FieldOrbit<T>, attitude provider, mass and potential provider.
-     * @param initialOrbit initial FieldOrbit<T>
+    /** Build a propagator from FieldOrbit, attitude provider, mass and potential provider.
+     * @param initialOrbit initial FieldOrbit
      * @param attitudeProv attitude provider
      * @param mass spacecraft mass
      * @param provider for un-normalized zonal coefficients
@@ -221,17 +254,18 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
         this(initialOrbit, attitudeProv, mass, provider, provider.onDate(initialOrbit.getDate().toAbsoluteDate()));
     }
 
-    /** Build a propagator from FieldOrbit<T>, attitude provider, mass and potential.
+    /** Build a propagator from FieldOrbit, attitude provider, mass and potential.
      * <p>The C<sub>n,0</sub> coefficients are the denormalized zonal coefficients, they
      * are related to both the normalized coefficients
      * <span style="text-decoration: overline">C</span><sub>n,0</sub>
      *  and the J<sub>n</sub> one as follows:</p>
-     * <pre>
+     * <p>
      *   C<sub>n,0</sub> = [(2-δ<sub>0,m</sub>)(2n+1)(n-m)!/(n+m)!]<sup>½</sup>
      *                      <span style="text-decoration: overline">C</span><sub>n,0</sub>
+     * <p>
      *   C<sub>n,0</sub> = -J<sub>n</sub>
-     * </pre>
-     * @param initialOrbit initial FieldOrbit<T>
+     *
+     * @param initialOrbit initial FieldOrbit
      * @param attitudeProv attitude provider
      * @param mass spacecraft mass
      * @param referenceRadius reference radius of the Earth for the potential model (m)
@@ -245,7 +279,7 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
     public FieldEcksteinHechlerPropagator(final FieldOrbit<T> initialOrbit,
                                           final AttitudeProvider attitudeProv,
                                           final T mass,
-                                          final double referenceRadius, final double mu,
+                                          final double referenceRadius, final T mu,
                                           final double c20, final double c30, final double c40,
                                           final double c50, final double c60) {
 
@@ -291,10 +325,11 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
         } else {
             models.addValidBefore(newModel, state.getDate());
         }
+        stateChanged(state);
     }
 
     /** Compute mean parameters according to the Eckstein-Hechler analytical model.
-     * @param osculating osculating FieldOrbit<T>
+     * @param osculating osculating FieldOrbit
      * @param mass constant mass
      * @return Eckstein-Hechler mean model
      */
@@ -327,10 +362,10 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
             final T deltaEx     = osculating.getCircularEx().subtract(parameters[1].getValue());
             final T deltaEy     = osculating.getCircularEy().subtract(parameters[2].getValue());
             final T deltaI      = osculating.getI()         .subtract(parameters[3].getValue());
-            final T deltaRAAN   = normalizeAngle(osculating.getRightAscensionOfAscendingNode().subtract(
+            final T deltaRAAN   = MathUtils.normalizeAngle(osculating.getRightAscensionOfAscendingNode().subtract(
                                                                 parameters[4].getValue()),
                                                                 zero);
-            final T deltaAlphaM = normalizeAngle(osculating.getAlphaM().subtract(parameters[5].getValue()), zero);
+            final T deltaAlphaM = MathUtils.normalizeAngle(osculating.getAlphaM().subtract(parameters[5].getValue()), zero);
             // update mean parameters
             current = new FieldEHModel<>(factory,
                                          new FieldCircularOrbit<>(current.mean.getA().add(deltaA),
@@ -374,7 +409,7 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
         /** Factory for the derivatives. */
         private final FDSFactory<T> factory;
 
-        /** Mean FieldOrbit<T>. */
+        /** Mean FieldOrbit. */
         private final FieldCircularOrbit<T> mean;
 
         /** Constant mass. */
@@ -437,16 +472,16 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
 
         // CHECKSTYLE: resume JavadocVariable check
 
-        /** Create a model for specified mean FieldOrbit<T>.
+        /** Create a model for specified mean FieldOrbit.
          * @param factory factory for the derivatives
-         * @param mean mean FieldOrbit<T>
+         * @param mean mean FieldOrbit
          * @param mass constant mass
          * @param referenceRadius reference radius of the central body attraction model (m)
          * @param mu central attraction coefficient (m³/s²)
          * @param ck0 un-normalized zonal coefficients
          */
         FieldEHModel(final FDSFactory<T> factory, final FieldCircularOrbit<T> mean, final T mass,
-                     final double referenceRadius, final double mu, final double[] ck0) {
+                     final double referenceRadius, final T mu, final double[] ck0) {
 
             this.factory         = factory;
             this.mean            = mean;
@@ -488,7 +523,7 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
                                                mean.getE());
             }
 
-            xnotDot = zero.add(mu).divide(mean.getA()).sqrt().divide(mean.getA());
+            xnotDot = mu.divide(mean.getA()).sqrt().divide(mean.getA());
 
             rdpom = g2.multiply(-0.75).multiply(sinI2.multiply(-5.0).add(4.0));
             rdpomp = g4.multiply(7.5).multiply(sinI2.multiply(-31.0 / 8.0).add(1.0).add( sinI4.multiply(49.0 / 16.0))).subtract(
@@ -576,8 +611,8 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
 
         }
 
-        /** Extrapolate an FieldOrbit<T> up to a specific target date.
-         * @param date target date for the FieldOrbit<T>
+        /** Extrapolate a FieldOrbit up to a specific target date.
+         * @param date target date for the FieldOrbit
          * @return propagated parameters
          */
         public FieldDerivativeStructure<T>[] propagateParameters(final FieldAbsoluteDate<T> date) {
@@ -604,13 +639,13 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
 
             // right ascension of ascending node
             final FieldDerivativeStructure<T> omm =
-                            factory.build(normalizeAngle(mean.getRightAscensionOfAscendingNode().add(ommD.multiply(xnot.getValue())),
+                            factory.build(MathUtils.normalizeAngle(mean.getRightAscensionOfAscendingNode().add(ommD.multiply(xnot.getValue())),
                                                          zero.add(FastMath.PI)),
                                           ommD.multiply(xnotDot),
                                           zero);
             // latitude argument
             final FieldDerivativeStructure<T> xlm =
-                            factory.build(normalizeAngle(mean.getAlphaM().add(aMD.multiply(xnot.getValue())), zero.add(FastMath.PI)),
+                            factory.build(MathUtils.normalizeAngle(mean.getAlphaM().add(aMD.multiply(xnot.getValue())), zero.add(FastMath.PI)),
                                           aMD.multiply(xnotDot),
                                           zero);
 
@@ -706,13 +741,13 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
     }
 
     /** Convert circular parameters <em>with derivatives</em> to Cartesian coordinates.
-     * @param date date of the FieldOrbit<T>al parameters
+     * @param date date of the parameters
      * @param parameters circular parameters (a, ex, ey, i, raan, alphaM)
      * @return Cartesian coordinates consistent with values and derivatives
      */
     private TimeStampedFieldPVCoordinates<T> toCartesian(final FieldAbsoluteDate<T> date, final FieldDerivativeStructure<T>[] parameters) {
 
-        // evaluate coordinates in the FieldOrbit<T> canonical reference frame
+        // evaluate coordinates in the FieldOrbit canonical reference frame
         final FieldDerivativeStructure<T> cosOmega = parameters[4].cos();
         final FieldDerivativeStructure<T> sinOmega = parameters[4].sin();
         final FieldDerivativeStructure<T> cosI     = parameters[3].cos();
@@ -733,7 +768,7 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
         final FieldDerivativeStructure<T> x        = parameters[0].multiply(u);
         final FieldDerivativeStructure<T> y        = parameters[0].multiply(v);
 
-        // canonical FieldOrbit<T> reference frame
+        // canonical FieldOrbit reference frame
         final FieldVector3D<FieldDerivativeStructure<T>> p =
                 new FieldVector3D<FieldDerivativeStructure<T>>(x.multiply(cosOmega).subtract(y.multiply(cosI.multiply(sinOmega))),
                                                        x.multiply(sinOmega).add(y.multiply(cosI.multiply(cosOmega))),
@@ -798,9 +833,9 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
      * Normalize an angle in a 2&pi; wide interval around a center value.
      * <p>This method has three main uses:</p>
      * <ul>
-     *   <li>normalize an angle between 0 and 2&pi;:<br/>
+     *   <li>normalize an angle between 0 and 2&pi;:<br>
      *       {@code a = MathUtils.normalizeAngle(a, FastMath.PI);}</li>
-     *   <li>normalize an angle between -&pi; and +&pi;<br/>
+     *   <li>normalize an angle between -&pi; and +&pi;<br>
      *       {@code a = MathUtils.normalizeAngle(a, 0.0);}</li>
      *   <li>compute the angle between two defining angular positions:<br>
      *       {@code angle = MathUtils.normalizeAngle(end, start) - start;}</li>
@@ -813,10 +848,11 @@ public class FieldEcksteinHechlerPropagator<T extends RealFieldElement<T>> exten
      * @param <T> the type of the field elements
      * @return a-2k&pi; with integer k and center-&pi; &lt;= a-2k&pi; &lt;= center+&pi;
      * @since 1.2
+     * @deprecated replaced by {@link MathUtils#normalizeAngle(RealFieldElement, RealFieldElement)}
      */
+    @Deprecated
     public static <T extends RealFieldElement<T>> T normalizeAngle(final T a, final T center) {
         return a.subtract(2 * FastMath.PI * FastMath.floor((a.getReal() + FastMath.PI - center.getReal()) / (2 * FastMath.PI)));
     }
-
 
 }

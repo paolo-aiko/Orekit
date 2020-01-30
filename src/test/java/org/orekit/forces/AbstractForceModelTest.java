@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -117,7 +117,7 @@ public abstract class AbstractForceModelTest {
                                                             factory.constant(a.getY()),
                                                             factory.constant(a.getZ())));
         final FieldCartesianOrbit<DerivativeStructure> orbit =
-                        new FieldCartesianOrbit<>(fPVA, state.getFrame(), state.getMu());
+                        new FieldCartesianOrbit<>(fPVA, state.getFrame(), field.getZero().add(state.getMu()));
         final FieldAttitude<DerivativeStructure> attitude =
                         attitudeProvider.getAttitude(orbit, orbit.getDate(), orbit.getFrame());
 
@@ -159,7 +159,7 @@ public abstract class AbstractForceModelTest {
                                         new FieldVector3D<>(field, state0.getAttitude().getSpin()),
                                         new FieldVector3D<>(field, state0.getAttitude().getRotationAcceleration()));
         final FieldSpacecraftState<DerivativeStructure> fState =
-                        new FieldSpacecraftState<>(new FieldCartesianOrbit<>(fPVA, state0.getFrame(), state0.getMu()),
+                        new FieldSpacecraftState<>(new FieldCartesianOrbit<>(fPVA, state0.getFrame(), field.getZero().add(state0.getMu())),
                                                    new FieldAttitude<>(state0.getFrame(), fAC),
                                                    field.getZero().add(state0.getMass()));
         FieldVector3D<DerivativeStructure> dsJacobian = forceModel.acceleration(fState,

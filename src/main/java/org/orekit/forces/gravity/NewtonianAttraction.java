@@ -1,5 +1,5 @@
 /* Copyright 2010-2011 Centre National d'Études Spatiales
- * Licensed to CS Systèmes d'Information (CS) under one or more
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -81,6 +81,16 @@ public class NewtonianAttraction extends AbstractForceModel {
         return gmParameterDriver.getValue();
     }
 
+    /** Get the central attraction coefficient μ.
+     * @param <T> the type of the field element
+     * @param field field to which the state belongs
+     * @return mu central attraction coefficient (m³/s²)
+     */
+    public <T extends RealFieldElement<T>> T getMu(final Field<T> field) {
+        final T zero = field.getZero();
+        return zero.add(gmParameterDriver.getValue());
+    }
+
     /** {@inheritDoc} */
     @Override
     public void addContribution(final SpacecraftState s, final TimeDerivativesEquations adder) {
@@ -91,7 +101,8 @@ public class NewtonianAttraction extends AbstractForceModel {
     @Override
     public <T extends RealFieldElement<T>> void addContribution(final FieldSpacecraftState<T> s,
                                                                 final FieldTimeDerivativesEquations<T> adder) {
-        adder.addKeplerContribution(getMu());
+        final Field<T> field = s.getDate().getField();
+        adder.addKeplerContribution(getMu(field));
     }
 
     /** {@inheritDoc} */

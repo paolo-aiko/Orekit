@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -46,14 +46,11 @@ public class GPSBlockIIF extends AbstractGNSSAttitudeProvider {
     /** Default yaw bias (rad). */
     public static final double DEFAULT_YAW_BIAS = FastMath.toRadians(-0.7);
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20171114L;
-
     /** Satellite-Sun angle limit for a midnight turn maneuver. */
     private static final double NIGHT_TURN_LIMIT = FastMath.toRadians(180.0 - 13.25);
 
     /** Margin on turn end. */
-    private final double END_MARGIN = 1800.0;
+    private static final double END_MARGIN = 1800.0;
 
     /** Yaw rate. */
     private final double yawRate;

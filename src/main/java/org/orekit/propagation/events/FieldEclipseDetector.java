@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -19,6 +19,7 @@ package org.orekit.propagation.events;
 import org.hipparchus.Field;
 import org.hipparchus.RealFieldElement;
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.orekit.propagation.FieldSpacecraftState;
 import org.orekit.propagation.events.handlers.FieldEventHandler;
@@ -28,10 +29,8 @@ import org.orekit.utils.PVCoordinatesProvider;
 /** Finder for satellite eclipse related events.
  * <p>This class finds eclipse events, i.e. satellite within umbra (total
  * eclipse) or penumbra (partial eclipse).</p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.FieldEventHandler.Action#CONTINUE continue}
- * propagation when entering the eclipse and to {@link
- * org.orekit.propagation.events.handlers.FieldEventHandler.Action#STOP stop} propagation
+ * <p>The default implementation behavior is to {@link Action#CONTINUE continue}
+ * propagation when entering the eclipse and to {@link Action#STOP stop} propagation
  * when exiting the eclipse. This can be changed by calling {@link
  * #withHandler(FieldEventHandler)} after construction.</p>
  * @see org.orekit.propagation.FieldPropagator#addEventDetector(FieldEventDetector)

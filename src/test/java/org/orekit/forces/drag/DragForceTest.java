@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -48,13 +48,13 @@ import org.orekit.errors.OrekitMessages;
 import org.orekit.forces.AbstractLegacyForceModelTest;
 import org.orekit.forces.BoxAndSolarArraySpacecraft;
 import org.orekit.forces.ForceModel;
-import org.orekit.forces.drag.atmosphere.Atmosphere;
-import org.orekit.forces.drag.atmosphere.HarrisPriester;
-import org.orekit.forces.drag.atmosphere.SimpleExponentialAtmosphere;
 import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.LOFType;
 import org.orekit.frames.Transform;
+import org.orekit.models.earth.atmosphere.Atmosphere;
+import org.orekit.models.earth.atmosphere.HarrisPriester;
+import org.orekit.models.earth.atmosphere.SimpleExponentialAtmosphere;
 import org.orekit.orbits.CartesianOrbit;
 import org.orekit.orbits.FieldKeplerianOrbit;
 import org.orekit.orbits.KeplerianOrbit;
@@ -416,7 +416,7 @@ public class DragForceTest extends AbstractLegacyForceModelTest {
                                                                                  PositionAngle.MEAN,
                                                                                  EME,
                                                                                  J2000,
-                                                                                 Constants.EIGEN5C_EARTH_MU);
+                                                                                 zero.add(Constants.EIGEN5C_EARTH_MU));
 
         FieldSpacecraftState<DerivativeStructure> initialState = new FieldSpacecraftState<>(FKO);
 
@@ -567,7 +567,7 @@ public class DragForceTest extends AbstractLegacyForceModelTest {
                                                                                  PositionAngle.MEAN,
                                                                                  EME,
                                                                                  J2000,
-                                                                                 Constants.EIGEN5C_EARTH_MU);
+                                                                                 zero.add(Constants.EIGEN5C_EARTH_MU));
 
         FieldSpacecraftState<DerivativeStructure> initialState = new FieldSpacecraftState<>(FKO);
 

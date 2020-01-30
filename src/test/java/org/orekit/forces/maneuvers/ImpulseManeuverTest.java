@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -107,6 +107,9 @@ public class ImpulseManeuverTest {
                                                                               RotationConvention.VECTOR_OPERATOR,
                                                                               0, 0, 0));
         ImpulseManeuver<DateDetector> burnAtEpoch = new ImpulseManeuver<DateDetector>(dateDetector, attitudeOverride, deltaV, isp).withThreshold(driftTimeInSec/4);
+        Assert.assertEquals(0.0, Vector3D.distance(deltaV, burnAtEpoch.getDeltaVSat()), 1.0e-15);
+        Assert.assertEquals(isp, burnAtEpoch.getIsp(), 1.0e-15);
+        Assert.assertSame(dateDetector, burnAtEpoch.getTrigger());
         propagator.addEventDetector(burnAtEpoch);
 
         SpacecraftState finalState = propagator.propagate(epoch.shiftedBy(totalPropagationTime));

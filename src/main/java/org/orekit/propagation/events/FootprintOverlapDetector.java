@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,7 +16,6 @@
  */
 package org.orekit.propagation.events;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,19 +26,18 @@ import org.hipparchus.geometry.spherical.twod.S2Point;
 import org.hipparchus.geometry.spherical.twod.Sphere2D;
 import org.hipparchus.geometry.spherical.twod.SphericalPolygonsSet;
 import org.hipparchus.geometry.spherical.twod.Vertex;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
 import org.orekit.bodies.OneAxisEllipsoid;
-import org.orekit.errors.OrekitException;
-import org.orekit.errors.OrekitInternalError;
 import org.orekit.frames.Transform;
-import org.orekit.models.earth.tessellation.ConstantAzimuthAiming;
+import org.orekit.geometry.fov.FieldOfView;
+import org.orekit.models.earth.tessellation.DivertedSingularityAiming;
 import org.orekit.models.earth.tessellation.EllipsoidTessellator;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.propagation.events.handlers.StopOnIncreasing;
-import org.orekit.utils.SphericalPolygonsSetTransferObject;
 
 /** Detector triggered by geographical region entering/leaving a spacecraft sensor
  * {@link FieldOfView Field Of View}.
@@ -54,10 +52,8 @@ import org.orekit.utils.SphericalPolygonsSetTransferObject;
  * This detector is typically used for ground observation missions with agile
  * satellites than can look away from nadir.
  * </p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#CONTINUE continue}
- * propagation at FOV entry and to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#STOP stop} propagation
+ * <p>The default implementation behavior is to {@link Action#CONTINUE continue}
+ * propagation at FOV entry and to {@link Action#STOP stop} propagation
  * at FOV exit. This can be changed by calling
  * {@link #withHandler(EventHandler)} after construction.</p>
  * @see org.orekit.propagation.Propagator#addEventDetector(EventDetector)
@@ -68,32 +64,29 @@ import org.orekit.utils.SphericalPolygonsSetTransferObject;
  */
 public class FootprintOverlapDetector extends AbstractDetector<FootprintOverlapDetector> {
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20150112L;
-
     /** Field of view. */
-    private final transient FieldOfView fov;
+    private final FieldOfView fov;
 
     /** Body on which the geographic zone is defined. */
     private final OneAxisEllipsoid body;
 
     /** Geographic zone to consider. */
-    private final transient SphericalPolygonsSet zone;
+    private final SphericalPolygonsSet zone;
 
     /** Linear step used for sampling the geographic zone. */
     private final double samplingStep;
 
     /** Sampling of the geographic zone. */
-    private final transient List<SamplingPoint> sampledZone;
+    private final List<SamplingPoint> sampledZone;
 
     /** Center of the spherical cap surrounding the zone. */
-    private final transient Vector3D capCenter;
+    private final Vector3D capCenter;
 
     /** Cosine of the radius of the spherical cap surrounding the zone. */
-    private final transient double capCos;
+    private final double capCos;
 
     /** Sine of the radius of the spherical cap surrounding the zone. */
-    private final transient double capSin;
+    private final double capSin;
 
     /** Build a new instance.
      * <p>The maximal interval between distance to FOV boundary checks should
@@ -182,7 +175,7 @@ public class FootprintOverlapDetector extends AbstractDetector<FootprintOverlapD
 
         // sample the zone interior
         final EllipsoidTessellator tessellator =
-                        new EllipsoidTessellator(body, new ConstantAzimuthAiming(body, 0.0), 4);
+                        new EllipsoidTessellator(body, new DivertedSingularityAiming(zone), 1);
         final List<List<GeodeticPoint>> gpSample = tessellator.sample(zone, samplingStep, samplingStep);
         for (final List<GeodeticPoint> list : gpSample) {
             for (final GeodeticPoint gp : list) {
@@ -215,9 +208,23 @@ public class FootprintOverlapDetector extends AbstractDetector<FootprintOverlapD
 
     /** Get the Field Of View.
      * @return Field Of View
+     * @since 10.1
      */
-    public FieldOfView getFieldOfView() {
+    public FieldOfView getFOV() {
         return fov;
+    }
+
+    /** Get the Field Of View.
+     * @return Field Of View, if detector has been built from a
+     * {@link org.orekit.propagation.events.FieldOfView}, or null of the
+     * detector was built from another implementation of {@link FieldOfView}
+     * @deprecated as of 10.1, replaced by {@link #getFOV()}
+     */
+    @Deprecated
+    public org.orekit.propagation.events.FieldOfView getFieldOfView() {
+        return fov instanceof org.orekit.propagation.events.FieldOfView ?
+               (org.orekit.propagation.events.FieldOfView) fov :
+               null;
     }
 
     /** Get the body on which the geographic zone is defined.
@@ -283,76 +290,13 @@ public class FootprintOverlapDetector extends AbstractDetector<FootprintOverlapD
             if (Vector3D.dotProduct(lineOfSightBody, point.getZenith()) <= 0) {
                 // spacecraft is above this sample point local horizon
                 // get line of sight in spacecraft frame
-                final double offset = fov.offsetFromBoundary(bodyToSc.transformVector(lineOfSightBody));
+                final double offset = fov.offsetFromBoundary(bodyToSc.transformVector(lineOfSightBody),
+                                                             0.0, VisibilityTrigger.VISIBLE_ONLY_WHEN_FULLY_IN_FOV);
                 value = FastMath.min(value, offset);
             }
         }
 
         return value;
-
-    }
-
-    /** Replace the instance with a data transfer object for serialization.
-     * @return data transfer object that will be serialized
-     */
-    private Object writeReplace() {
-        return new DTO(this);
-    }
-
-    /** Internal class used only for serialization. */
-    private static class DTO implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20150112L;
-
-        /** Max check interval. */
-        private final double maxCheck;
-
-        /** Convergence threshold. */
-        private final double threshold;
-
-        /** Maximum number of iterations in the event time search. */
-        private final int maxIter;
-
-        /** Body on which the geographic zone is defined. */
-        private final OneAxisEllipsoid body;
-
-        /** Field Of View. */
-        private final FieldOfView fov;
-
-        /** Proxy for geographic zone. */
-        private final SphericalPolygonsSetTransferObject zone;
-
-        /** Linear step used for sampling the geographic zone. */
-        private final double samplingStep;
-
-        /** Simple constructor.
-         * @param detector instance to serialize
-         */
-        private DTO(final FootprintOverlapDetector detector) {
-            this.maxCheck     = detector.getMaxCheckInterval();
-            this.threshold    = detector.getThreshold();
-            this.maxIter      = detector.getMaxIterationCount();
-            this.fov          = detector.fov;
-            this.body         = detector.body;
-            this.zone         = new SphericalPolygonsSetTransferObject(detector.zone);
-            this.samplingStep = detector.samplingStep;
-        }
-
-        /** Replace the deserialized data transfer object with a {@link FootprintOverlapDetector}.
-         * @return replacement {@link FootprintOverlapDetector}
-         */
-        private Object readResolve() {
-            try {
-                return new FootprintOverlapDetector(fov, body, zone.rebuildZone(), samplingStep).
-                                withMaxCheck(maxCheck).
-                                withThreshold(threshold).
-                                withMaxIter(maxIter);
-            } catch (OrekitException oe) {
-                // this should never happen as the region as already been sampled before serialization
-                throw new OrekitInternalError(oe);
-            }
-        }
 
     }
 

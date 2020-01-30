@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -41,20 +41,6 @@ public class Differentiation {
     /** Private constructor for utility class.
      */
     private Differentiation() {
-    }
-
-    /** Differentiate a scalar function using finite differences.
-     * @param function function to differentiate
-     * @param driver driver for the parameter
-     * @param nbPoints number of points used for finite differences
-     * @param normalizedStep step for finite differences, in <em>normalized</em> units
-     * @return scalar function evaluating to the derivative of the original function
-     * @deprecated as of 9.3, replaced by {@link #differentiate(ParameterFunction, int, double)}
-     */
-    @Deprecated
-    public static ParameterFunction differentiate(final ParameterFunction function, final ParameterDriver driver,
-                                                  final int nbPoints, final double normalizedStep) {
-        return differentiate(function, nbPoints, normalizedStep * driver.getScale());
     }
 
     /** Differentiate a scalar function using finite differences.

@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -17,11 +17,6 @@
 package org.orekit.attitudes;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +52,6 @@ import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.AngularDerivativesFilter;
 import org.orekit.utils.IERSConventions;
 import org.orekit.utils.TimeStampedAngularCoordinates;
-
 
 public class TabulatedProviderTest {
 
@@ -119,35 +113,7 @@ public class TabulatedProviderTest {
         checkField(Decimal64Field.getInstance(), provider, circOrbit, circOrbit.getDate(), circOrbit.getFrame());
     }
 
-    @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        double             samplingRate      = 60.0;
-        double             checkingRate      = 10.0;
-        int                n                 = 8;
-        AttitudeProvider   referenceProvider = new NadirPointing(circOrbit.getFrame(), earthShape);
-        List<TimeStampedAngularCoordinates> sample = createSample(samplingRate, referenceProvider);
-        final double       margin            = samplingRate * n / 2;
-        final AbsoluteDate start             = sample.get(0).getDate().shiftedBy(margin);
-        final AbsoluteDate end               = sample.get(sample.size() - 1).getDate().shiftedBy(-margin);
-        TabulatedProvider  provider          = new TabulatedProvider(circOrbit.getFrame(), sample, n,
-                                                                     AngularDerivativesFilter.USE_RR);
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-        oos.writeObject(provider);
-        Assert.assertTrue(bos.size() > 26000);
-        Assert.assertTrue(bos.size() < 27000);
-
-        ByteArrayInputStream  bis = new ByteArrayInputStream(bos.toByteArray());
-        ObjectInputStream     ois = new ObjectInputStream(bis);
-        TabulatedProvider deserialized  = (TabulatedProvider) ois.readObject();
-
-        Assert.assertEquals(0.0, checkError(start, end, checkingRate, provider, deserialized), 1.0e-20);
-
-    }
-
-    private List<TimeStampedAngularCoordinates> createSample(double samplingRate, AttitudeProvider referenceProvider)
-        {
+    private List<TimeStampedAngularCoordinates> createSample(double samplingRate, AttitudeProvider referenceProvider) {
 
         // reference propagator, using a yaw compensation law
         final KeplerianPropagator referencePropagator = new KeplerianPropagator(circOrbit);
@@ -169,8 +135,7 @@ public class TabulatedProviderTest {
     }
 
     private double checkError(final AbsoluteDate start, AbsoluteDate end, double checkingRate,
-                              final AttitudeProvider referenceProvider, TabulatedProvider provider)
-            {
+                              final AttitudeProvider referenceProvider, TabulatedProvider provider) {
 
         // prepare an interpolating provider, using only internal steps
         // (i.e. ignoring interpolation near boundaries)
@@ -204,8 +169,7 @@ public class TabulatedProviderTest {
 
     private <T extends RealFieldElement<T>> void checkField(final Field<T> field, final AttitudeProvider provider,
                                                             final Orbit orbit, final AbsoluteDate date,
-                                                            final Frame frame)
-        {
+                                                            final Frame frame) {
         Attitude attitudeD = provider.getAttitude(orbit, date, frame);
         final FieldOrbit<T> orbitF = new FieldSpacecraftState<>(field, new SpacecraftState(orbit)).getOrbit();
         final FieldAbsoluteDate<T> dateF = new FieldAbsoluteDate<>(field, date);

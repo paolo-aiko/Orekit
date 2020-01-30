@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -36,10 +36,10 @@ import org.orekit.utils.LoveNumbers;
  * The computation of the spherical harmonics part is done using the algorithm
  * designed by S. A. Holmes and W. E. Featherstone from Department of Spatial Sciences,
  * Curtin University of Technology, Perth, Australia and described in their 2002 paper:
- * <a href="http://cct.gfy.ku.dk/publ_others/ccta1870.pdf">A unified approach to
- * the Clenshaw summation and the recursive computation of very high degree and
- * order normalised associated Legendre functions</a> (Journal of Geodesy (2002)
- * 76: 279–299).
+ * <a href="https://www.researchgate.net/publication/226460594_A_unified_approach_to_the_Clenshaw_summation_and_the_recursive_computation_of_very_high_degree_and_order_normalised_associated_Legendre_functions">
+ * A unified approach to the Clenshaw summation and the recursive computation of
+ * very high degree and order normalised associated Legendre functions</a>
+ * (Journal of Geodesy (2002) 76: 279–299).
  * </p>
  * <p>
  * Note that this class is <em>not</em> thread-safe, and that tides computation
@@ -163,13 +163,13 @@ class SolidTidesField implements NormalizedSphericalHarmonicsProvider {
     /** {@inheritDoc} */
     @Override
     public AbsoluteDate getReferenceDate() {
-        return AbsoluteDate.J2000_EPOCH;
+        return AbsoluteDate.ARBITRARY_EPOCH;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getOffset(final AbsoluteDate date) {
-        return date.durationFrom(AbsoluteDate.J2000_EPOCH);
+        return date.durationFrom(getReferenceDate());
     }
 
     /** {@inheritDoc} */

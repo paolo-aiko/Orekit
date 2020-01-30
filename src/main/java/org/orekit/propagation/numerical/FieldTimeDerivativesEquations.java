@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -43,7 +43,7 @@ public interface FieldTimeDerivativesEquations<T extends RealFieldElement<T>> {
      * numerical accuracy.</p>
      * @param mu central body gravitational constant
      */
-    void addKeplerContribution(double mu);
+    void addKeplerContribution(T mu);
 
     /** Add the contribution of an acceleration expressed in some inertial frame.
      * @param gamma acceleration vector in the same inertial frame the spacecraft state is defined in (m/s²)

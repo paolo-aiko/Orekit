@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -26,7 +26,7 @@ import org.hipparchus.geometry.euclidean.threed.FieldVector3D;
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
 import org.orekit.attitudes.AttitudeProvider;
 import org.orekit.attitudes.FieldAttitude;
-import org.orekit.models.earth.DiscreteTroposphericModel;
+import org.orekit.models.earth.troposphere.DiscreteTroposphericModel;
 import org.orekit.orbits.FieldCartesianOrbit;
 import org.orekit.orbits.FieldOrbit;
 import org.orekit.propagation.FieldSpacecraftState;
@@ -90,7 +90,8 @@ public class TroposphericDSConverter {
 
         final FieldOrbit<DerivativeStructure> dsOrbit =
                         new FieldCartesianOrbit<>(new TimeStampedFieldPVCoordinates<>(state.getDate(), posDS, velDS, accDS),
-                                                  state.getFrame(), state.getMu());
+                                                  state.getFrame(),
+                                                  factory.getDerivativeField().getZero().add(state.getMu()));
 
         final FieldAttitude<DerivativeStructure> dsAttitude;
         if (freeStateParameters > 3) {
@@ -146,7 +147,7 @@ public class TroposphericDSConverter {
                                                                                           extend(pv0.getPosition(),     factory),
                                                                                           extend(pv0.getVelocity(),     factory),
                                                                                           extend(pv0.getAcceleration(), factory)),
-                                                      s0.getFrame(), s0.getMu());
+                                                      s0.getFrame(), extend(s0.getMu(), factory));
 
             // attitude
             final FieldAngularCoordinates<DerivativeStructure> ac0 = s0.getAttitude().getOrientation();

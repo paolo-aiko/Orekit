@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
@@ -188,8 +189,13 @@ public enum OrekitMessages implements Localizable {
     UNABLE_TO_COMPUTE_HYPERBOLIC_ECCENTRIC_ANOMALY("unable to compute hyperbolic eccentric anomaly from the mean anomaly after {0} iterations"),
     UNABLE_TO_COMPUTE_DSST_MEAN_PARAMETERS("unable to compute mean orbit from osculating orbit after {0} iterations"),
     OUT_OF_RANGE_DERIVATION_ORDER("derivation order {0} is out of range"),
-    OUT_OF_RANGE_LATITUDE("out of range latitude: {0}, [{1}, {2}]"),
     ORBIT_TYPE_NOT_ALLOWED("orbit type {0} not allowed here, allowed types: {1}"),
+    NON_PSEUDO_INERTIAL_FRAME_NOT_SUITABLE_AS_REFERENCE_FOR_INERTIAL_FORCES("non pseudo-inertial frame {0} is not suitable as reference for inertial forces"),
+    METHOD_NOT_AVAILABLE_WITHOUT_CENTRAL_BODY("method not available in the absence of a central body"),
+    INCOMPATIBLE_FRAMES("operation not available between frames {0} and {1}"),
+    UNDEFINED_ORBIT("orbit not defined, state rather contains an absolute position-velocity-acceleration"),
+    UNDEFINED_ABSOLUTE_PVCOORDINATES("absolute position-velocity-acceleration not defined, state rather contains an orbit"),
+    INERTIAL_FORCE_MODEL_MISSING("an inertial force model has to be used when propagating in non-inertial frame {0}"),
     NO_SEM_ALMANAC_AVAILABLE("no SEM almanac file found"),
     NOT_A_SUPPORTED_SEM_ALMANAC_FILE("file {0} is not a supported SEM almanac file"),
     NO_YUMA_ALMANAC_AVAILABLE("no Yuma almanac file found"),
@@ -206,6 +212,7 @@ public enum OrekitMessages implements Localizable {
     STATION_NOT_FOUND("station {0} not found, known stations: {1}"),
     UNKNOWN_SATELLITE_SYSTEM("unknown satellite system {0}"),
     UNKNOWN_SATELLITE_ANTENNA_CODE("unknown satellite antenna code {0}"),
+    UNSUPPORTED_FREQUENCY_FOR_ANTENNA("frequency {0} is not supported by antenna {1}"),
     CANNOT_FIND_SATELLITE_IN_SYSTEM("cannot find satellite {0} in satellite system {1}"),
     UNKNOWN_RINEX_FREQUENCY("unknown RINEX frequency {0} in file {1}, line {2}"),
     MISMATCHED_FREQUENCIES("mismatched frequencies in file {0}, line {1} (expected {2}, got {3})"),
@@ -222,8 +229,25 @@ public enum OrekitMessages implements Localizable {
     VIENNA_ACOEF_OR_ZENITH_DELAY_NOT_LOADED("Vienna coefficients ah or aw or zh or zw could not be loaded from {0}"),
     VIENNA_ACOEF_OR_ZENITH_DELAY_NOT_AVAILABLE_FOR_DATE("Vienna coefficients ah or aw or zh or zw not available for date {0}"),
     NO_VIENNA_ACOEF_OR_ZENITH_DELAY_IN_FILE("file {0} does not contain Vienna coefficients ah, aw, zh or zw"),
-    IRREGULAR_OR_INCOMPLETE_GRID("irregular or incomplete grid in file {0}");
-
+    IRREGULAR_OR_INCOMPLETE_GRID("irregular or incomplete grid in file {0}"),
+    INVALID_SATELLITE_SYSTEM("invalid satellite system {0}"),
+    NO_TEC_DATA_IN_FILE_FOR_DATE("IONEX file {0} does not contain TEC data for date {1}"),
+    INCONSISTENT_NUMBER_OF_TEC_MAPS_IN_FILE("number of maps {0} is inconsistent with header specification: {1}"),
+    NO_LATITUDE_LONGITUDE_BONDARIES_IN_IONEX_HEADER("file {0} does not contain latitude or longitude bondaries in its header section"),
+    NO_EPOCH_IN_IONEX_HEADER("file {0} does not contain epoch of first or last map in its header section"),
+    ITRF_VERSIONS_PREFIX_ONLY("The first column of itrf-versions.conf is a plain " +
+            "prefix that is matched against the name of each loaded file. It should " +
+            "not contain any regular expression syntax or directory components, i.e. " +
+            "\"/\" or \"\\\". Actual value: \"{0}\"."),
+    CANNOT_COMPUTE_AIMING_AT_SINGULAR_POINT("cannot compute aiming direction at singular point: latitude = {0}, longitude = {1}"),
+    STEC_INTEGRATION_DID_NOT_CONVERGE("STEC integration did not converge"),
+    MODIP_GRID_NOT_LOADED("MODIP grid not be loaded from {0}"),
+    NEQUICK_F2_FM3_NOT_LOADED("NeQuick coefficient f2 or fm3 not be loaded from {0}"),
+    NOT_A_SUPPORTED_HATANAKA_COMPRESSED_FILE("file {0} is not a supported Hatanaka-compressed file"),
+    INVALID_MEASUREMENT_TYPES_FOR_COMBINATION_OF_MEASUREMENTS("invalid measurement types {0} and {1} for the combination of measurements {2}"),
+    INCOMPATIBLE_FREQUENCIES_FOR_COMBINATION_OF_MEASUREMENTS("frequencies {0} and {1} are incompatibles for the {2} combination"),
+    NON_CHRONOLOGICAL_DATES_FOR_OBSERVATIONS("observations {0} and {1} are not in chronological dates"),
+    EXCEPTIONAL_DATA_CONTEXT("Use of the ExceptionalDataContext detected. This is typically used to detect developer errors.");
 
     // CHECKSTYLE: resume JavadocVariable check
 
@@ -306,7 +330,7 @@ public enum OrekitMessages implements Localizable {
             if (stream != null) {
                 try {
                     // Only this line is changed to make it to read properties files as UTF-8.
-                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, StandardCharsets.UTF_8));
                 } finally {
                     stream.close();
                 }

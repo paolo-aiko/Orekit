@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -55,52 +55,6 @@ public class RangeRate extends AbstractMeasurement<RangeRate> {
     private final boolean twoway;
 
     /** Simple constructor.
-     * <p>
-     * This constructor uses 0 as the index of the propagator related
-     * to this measurement, thus being well suited for mono-satellite
-     * orbit determination.
-     * </p>
-     * @param station ground station from which measurement is performed
-     * @param date date of the measurement
-     * @param rangeRate observed value, m/s
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @param twoway if true, this is a two-way measurement
-     * @deprecated since 9.3 replaced by {@link #RangeRate(GroundStation, AbsoluteDate,
-     * double, double, double, boolean, ObservableSatellite)}
-     */
-    @Deprecated
-    public RangeRate(final GroundStation station, final AbsoluteDate date,
-                     final double rangeRate,
-                     final double sigma,
-                     final double baseWeight,
-                     final boolean twoway) {
-        this(station, date, rangeRate, sigma, baseWeight, twoway, new ObservableSatellite(0));
-    }
-
-    /** Simple constructor.
-     * @param station ground station from which measurement is performed
-     * @param date date of the measurement
-     * @param rangeRate observed value, m/s
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @param twoway if true, this is a two-way measurement
-     * @param propagatorIndex index of the propagator related to this measurement
-     * @since 9.0
-     * @deprecated since 9.3 replaced by {@link #RangeRate(GroundStation, AbsoluteDate,
-     * double, double, double, boolean, ObservableSatellite)}
-     */
-    @Deprecated
-    public RangeRate(final GroundStation station, final AbsoluteDate date,
-                     final double rangeRate,
-                     final double sigma,
-                     final double baseWeight,
-                     final boolean twoway,
-                     final int propagatorIndex) {
-        this(station, date, rangeRate, sigma, baseWeight, twoway, new ObservableSatellite(propagatorIndex));
-    }
-
-    /** Simple constructor.
      * @param station ground station from which measurement is performed
      * @param date date of the measurement
      * @param rangeRate observed value, m/s
@@ -147,8 +101,7 @@ public class RangeRate extends AbstractMeasurement<RangeRate> {
     protected EstimatedMeasurement<RangeRate> theoreticalEvaluation(final int iteration, final int evaluation,
                                                                     final SpacecraftState[] states) {
 
-        final ObservableSatellite satellite = getSatellites().get(0);
-        final SpacecraftState     state     = states[satellite.getPropagatorIndex()];
+        final SpacecraftState state = states[0];
 
         // Range-rate derivatives are computed with respect to spacecraft state in inertial frame
         // and station position in station's offset frame

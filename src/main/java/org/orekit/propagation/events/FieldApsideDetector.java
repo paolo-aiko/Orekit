@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -18,6 +18,7 @@ package org.orekit.propagation.events;
 
 import org.hipparchus.RealFieldElement;
 import org.hipparchus.geometry.euclidean.threed.FieldVector3D;
+import org.hipparchus.ode.events.Action;
 import org.orekit.orbits.FieldOrbit;
 import org.orekit.propagation.FieldSpacecraftState;
 import org.orekit.propagation.events.handlers.FieldEventHandler;
@@ -26,10 +27,8 @@ import org.orekit.utils.FieldPVCoordinates;
 
 /** Finder for apside crossing events.
  * <p>This class finds apside crossing events (i.e. apogee or perigee crossing).</p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.FieldEventHandler.Action#CONTINUE continue}
- * propagation at apogee crossing and to {@link
- * org.orekit.propagation.events.handlers.FieldEventHandler.Action#STOP stop} propagation
+ * <p>The default implementation behavior is to {@link Action#CONTINUE continue}
+ * propagation at apogee crossing and to {@link Action#STOP stop} propagation
  * at perigee crossing. This can be changed by calling
  * {@link #withHandler(FieldEventHandler)} after construction.</p>
  * <p>Beware that apside detection will fail for almost circular orbits. If

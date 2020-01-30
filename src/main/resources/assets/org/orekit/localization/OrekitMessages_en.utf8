@@ -403,11 +403,26 @@ UNABLE_TO_COMPUTE_DSST_MEAN_PARAMETERS = unable to compute mean orbit from oscul
 # derivation order {0} is out of range
 OUT_OF_RANGE_DERIVATION_ORDER = derivation order {0} is out of range
 
-# out of range latitude: {0}, [{1}, {2}]
-OUT_OF_RANGE_LATITUDE = out of range latitude: {0}, [{1}, {2}]
-
 # orbit type {0} not allowed here, allowed types: {1}
 ORBIT_TYPE_NOT_ALLOWED = orbit type {0} not allowed here, allowed types: {1}
+
+# non pseudo-inertial frame {0} is not suitable as reference for inertial forces
+NON_PSEUDO_INERTIAL_FRAME_NOT_SUITABLE_AS_REFERENCE_FOR_INERTIAL_FORCES = non pseudo-inertial frame {0} is not suitable as reference for inertial forces
+
+# method not available in the absence of a central body
+METHOD_NOT_AVAILABLE_WITHOUT_CENTRAL_BODY = method not available in the absence of a central body
+
+# operation not available between frames {0} and {1}
+INCOMPATIBLE_FRAMES = operation not available between frames {0} and {1}
+
+# orbit not defined, state rather contains an absolute position-velocity-acceleration
+UNDEFINED_ORBIT = orbit not defined, state rather contains an absolute position-velocity-acceleration
+
+# absolute position-velocity-acceleration not defined, state rather contains an orbit
+UNDEFINED_ABSOLUTE_PVCOORDINATES = absolute position-velocity-acceleration not defined, state rather contains an orbit
+
+# an inertial force model has to be used when propagating in non-inertial frame {0}
+INERTIAL_FORCE_MODEL_MISSING = an inertial force model has to be used when propagating in non-inertial frame {0}
 
 # no SEM almanac file found
 NO_SEM_ALMANAC_AVAILABLE = no SEM almanac file found
@@ -463,6 +478,9 @@ UNKNOWN_SATELLITE_SYSTEM = unknown satellite system {0}
 # unknown satellite antenna code {0}
 UNKNOWN_SATELLITE_ANTENNA_CODE = unknown satellite antenna code {0}
 
+# frequency {0} is not supported by antenna {1}
+UNSUPPORTED_FREQUENCY_FOR_ANTENNA = frequency {0} is not supported by antenna {1}
+
 # cannot find satellite {0} in satellite system {1}
 CANNOT_FIND_SATELLITE_IN_SYSTEM = cannot find satellite {0} in satellite system {1}
 
@@ -513,3 +531,51 @@ NO_VIENNA_ACOEF_OR_ZENITH_DELAY_IN_FILE = file {0} does not contain Vienna coeff
 
 # irregular or incomplete grid in file {0}
 IRREGULAR_OR_INCOMPLETE_GRID = irregular or incomplete grid in file {0}
+
+# invalid satellite system {0}
+INVALID_SATELLITE_SYSTEM = invalid satellite system {0}
+
+# IONEX file {0} does not contain TEC data for date {1}
+NO_TEC_DATA_IN_FILE_FOR_DATE = IONEX file {0} does not contain TEC data for date {1}
+
+# number of maps {0} is inconsistent with header specification: {1}
+INCONSISTENT_NUMBER_OF_TEC_MAPS_IN_FILE = number of maps {0} is inconsistent with header specification: {1}
+
+# file {0} does not contain latitude or longitude bondaries in its header section
+NO_LATITUDE_LONGITUDE_BONDARIES_IN_IONEX_HEADER = file {0} does not contain latitude or longitude bondaries in its header section
+
+# file {0} does not contain epoch of first or last map in its header section
+NO_EPOCH_IN_IONEX_HEADER = file {0} does not contain epoch of first or last map in its header section
+
+# The first column of itrf-versions.conf is a plain prefix that is matched against the
+# name of each loaded file. It should not contain any regular expression syntax or
+# directory components, i.e. \"/\" or \"\\\". Actual value: \"{0}\".
+ITRF_VERSIONS_PREFIX_ONLY = The first column of itrf-versions.conf is a plain prefix that is matched against the name of each loaded file. It should not contain any regular expression syntax or directory components, i.e. "/" or "\\". Actual value: "{0}".
+
+# cannot compute aiming direction at singular point: latitude = {0}, longitude = {1}
+CANNOT_COMPUTE_AIMING_AT_SINGULAR_POINT = cannot compute aiming direction at singular point: latitude = {0}, longitude = {1}
+
+# STEC integration did not converge
+STEC_INTEGRATION_DID_NOT_CONVERGE = STEC integration did not converge
+
+# MODIP grid not be loaded from {0}
+MODIP_GRID_NOT_LOADED = MODIP grid not be loaded from {0}
+
+# NeQuick coefficient f2 or fm3 not be loaded from {0}
+NEQUICK_F2_FM3_NOT_LOADED = NeQuick coefficient f2 or fm3 not be loaded from {0}
+
+# file {0} is not a supported Hatanaka-compressed file
+NOT_A_SUPPORTED_HATANAKA_COMPRESSED_FILE = file {0} is not a supported Hatanaka-compressed file
+
+# invalid measurement types {0} and {1} for the combination of measurements {2}
+INVALID_MEASUREMENT_TYPES_FOR_COMBINATION_OF_MEASUREMENTS = invalid measurement types {0} and {1} for the combination of measurements {2}
+
+# frequencies {0} and {1} are incompatibles for the {2} combination
+INCOMPATIBLE_FREQUENCIES_FOR_COMBINATION_OF_MEASUREMENTS = frequencies {0} and {1} are incompatibles for the {2} combination
+
+# observations {0} and {1} are not in chronological dates
+NON_CHRONOLOGICAL_DATES_FOR_OBSERVATIONS = observations {0} and {1} are not in chronological dates
+
+# Use of the ExceptionalDataContext detected. This is typically used to detect developer errors.
+EXCEPTIONAL_DATA_CONTEXT = Use of the ExceptionalDataContext detected. This is typically used to detect developer errors.
+

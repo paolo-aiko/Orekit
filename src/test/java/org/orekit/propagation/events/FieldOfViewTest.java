@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,18 +16,11 @@
  */
 package org.orekit.propagation.events;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.hipparchus.exception.LocalizedCoreFormats;
 import org.hipparchus.geometry.euclidean.threed.RotationOrder;
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
-import org.hipparchus.geometry.spherical.twod.S2Point;
-import org.hipparchus.geometry.spherical.twod.SphericalPolygonsSet;
 import org.hipparchus.random.UnitSphereRandomVectorGenerator;
 import org.hipparchus.random.Well1024a;
 import org.hipparchus.util.FastMath;
@@ -54,6 +47,7 @@ import org.orekit.utils.Constants;
 import org.orekit.utils.IERSConventions;
 import org.orekit.utils.PVCoordinates;
 
+@Deprecated
 public class FieldOfViewTest {
 
     @Test
@@ -105,7 +99,9 @@ public class FieldOfViewTest {
                         new UnitSphereRandomVectorGenerator(3, new Well1024a(0x17df21c7598b114bl));
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = new Vector3D(random.nextVector()).scalarMultiply(1.0e6);
-            Assert.assertEquals(square1.offsetFromBoundary(v), square2.offsetFromBoundary(v), 1.0e-15);
+            Assert.assertEquals(square1.offsetFromBoundary(v, 0.125, VisibilityTrigger.VISIBLE_ONLY_WHEN_FULLY_IN_FOV),
+                                square2.offsetFromBoundary(v, 0.125, VisibilityTrigger.VISIBLE_ONLY_WHEN_FULLY_IN_FOV),
+                                2.6e-15);
         }
     }
 
@@ -124,7 +120,7 @@ public class FieldOfViewTest {
             for (double lambda = -0.5 * FastMath.PI; lambda < 0.5 * FastMath.PI; lambda += 0.1) {
                 Vector3D v = new Vector3D(0.0, lambda).scalarMultiply(1.0e6);
                 double theoreticalOffset = 0.5 * FastMath.PI - lambda - delta - margin;
-                double offset = fov.offsetFromBoundary(v);
+                double offset = fov.offsetFromBoundary(v, 0.0, VisibilityTrigger.VISIBLE_ONLY_WHEN_FULLY_IN_FOV);
                 if (theoreticalOffset > 0.01) {
                     // the offsetFromBoundary method may use the fast approximate
                     // method, so we cannot check the error accurately
@@ -367,33 +363,6 @@ public class FieldOfViewTest {
                                               inertToBody);
         List<List<GeodeticPoint>> footprint = fov.getFootprint(fovToBody, earth, FastMath.toRadians(1.0));
         Assert.assertEquals(0, footprint.size());
-    }
-
-    @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        FieldOfView fov = new FieldOfView(new SphericalPolygonsSet(1.0e-12,
-                                                                   new S2Point(Vector3D.PLUS_I),
-                                                                   new S2Point(Vector3D.PLUS_J),
-                                                                   new S2Point(Vector3D.PLUS_K)),
-                                          0.001);
-        Assert.assertEquals(0.5 * FastMath.PI, fov.getZone().getSize(),         1.0e-15);
-        Assert.assertEquals(1.5 * FastMath.PI, fov.getZone().getBoundarySize(), 1.0e-15);
-        Assert.assertEquals(0.001,  fov.getMargin(), 1.0e-15);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-        oos.writeObject(fov);
-
-
-        Assert.assertTrue(bos.size() > 400);
-        Assert.assertTrue(bos.size() < 450);
-
-        ByteArrayInputStream  bis = new ByteArrayInputStream(bos.toByteArray());
-        ObjectInputStream     ois = new ObjectInputStream(bis);
-        FieldOfView deserialized  = (FieldOfView) ois.readObject();
-        Assert.assertEquals(0.5 * FastMath.PI, deserialized.getZone().getSize(),         1.0e-15);
-        Assert.assertEquals(1.5 * FastMath.PI, deserialized.getZone().getBoundarySize(), 1.0e-15);
-        Assert.assertEquals(0.001,  deserialized.getMargin(), 1.0e-15);
-
     }
 
 }

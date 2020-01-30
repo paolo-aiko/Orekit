@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -394,7 +394,7 @@ public class FieldPVCoordinatesTest {
                                                                            new FieldVector3D<>(new Decimal64(-2079.), new Decimal64(5291.), new Decimal64(-7842.))),
                                                         FramesFactory.getEME2000(),
                                                         FieldAbsoluteDate.getJ2000Epoch(Decimal64Field.getInstance()),
-                                                        Constants.EIGEN5C_EARTH_MU);
+                                                        new Decimal64(Constants.EIGEN5C_EARTH_MU));
         FieldPVCoordinates<FieldDerivativeStructure<Decimal64>> fv = orbit.getPVCoordinates().toDerivativeStructurePV(2);
         FieldVector3D<Decimal64> numericalJerk = differentiate(orbit, o -> o.getPVCoordinates().getAcceleration());
         Assert.assertEquals(numericalJerk.getX().getReal(),
@@ -416,7 +416,7 @@ public class FieldPVCoordinatesTest {
                                                                            new FieldVector3D<>(new Decimal64(-2079.), new Decimal64(5291.), new Decimal64(-7842.))),
                                                         FramesFactory.getEME2000(),
                                                         FieldAbsoluteDate.getJ2000Epoch(Decimal64Field.getInstance()),
-                                                        Constants.EIGEN5C_EARTH_MU);
+                                                        new Decimal64(Constants.EIGEN5C_EARTH_MU));
         FieldPVCoordinates<FieldDerivativeStructure<Decimal64>> fv1 = orbit.getPVCoordinates().toDerivativeStructurePV(1);
         FieldVector3D<Decimal64> numericalJerk = differentiate(orbit, o -> o.getPVCoordinates().getAcceleration());
         Assert.assertEquals(numericalJerk.getX().getReal(),
@@ -449,7 +449,7 @@ public class FieldPVCoordinatesTest {
                                                                            new FieldVector3D<>(new Decimal64(-2079.), new Decimal64(5291.), new Decimal64(-7842.))),
                                                         FramesFactory.getEME2000(),
                                                         FieldAbsoluteDate.getJ2000Epoch(Decimal64Field.getInstance()),
-                                                        Constants.EIGEN5C_EARTH_MU);
+                                                        new Decimal64(Constants.EIGEN5C_EARTH_MU));
         FieldPVCoordinates<FieldDerivativeStructure<Decimal64>> fv = orbit.getPVCoordinates().toDerivativeStructurePV(2);
         FieldVector3D<Decimal64> numericalJounce = differentiate(orbit, o -> {
         FieldVector3D<FieldDerivativeStructure<Decimal64>> a = o.getPVCoordinates().toDerivativeStructurePV(1).getAcceleration();

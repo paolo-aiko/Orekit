@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -140,7 +140,7 @@ public interface ForceModel {
      * @param s current state information: date, kinematics, attitude
      * @param parameters values of the force model parameters
      * @return acceleration in same frame as state
-          * @since 9.0
+     * @since 9.0
      */
     Vector3D acceleration(SpacecraftState s, double[] parameters);
 
@@ -149,7 +149,7 @@ public interface ForceModel {
      * @param parameters values of the force model parameters
      * @return acceleration in same frame as state
      * @param <T> type of the elements
-          * @since 9.0
+     * @since 9.0
      */
     <T extends RealFieldElement<T>> FieldVector3D<T> acceleration(FieldSpacecraftState<T> s, T[] parameters);
 
@@ -160,7 +160,7 @@ public interface ForceModel {
 
     /** Get the discrete events related to the model.
      * @param field field to which the state belongs
-     * @param <T> extends RealFieldElement<T>
+     * @param <T> extends RealFieldElement&lt;T&gt;
      * @return stream of events detectors
      */
     <T extends RealFieldElement<T>> Stream<FieldEventDetector<T>> getFieldEventsDetectors(Field<T> field);

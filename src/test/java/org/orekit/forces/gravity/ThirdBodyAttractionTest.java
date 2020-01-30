@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -153,6 +153,7 @@ public class ThirdBodyAttractionTest extends AbstractLegacyForceModelTest {
         DerivativeStructure R_0 = factory.variable(3, 0.7);
         DerivativeStructure O_0 = factory.variable(4, 0.5);
         DerivativeStructure n_0 = factory.variable(5, 0.1);
+        DerivativeStructure mu  = factory.constant(Constants.EIGEN5C_EARTH_MU);
 
         Field<DerivativeStructure> field = a_0.getField();
         DerivativeStructure zero = field.getZero();
@@ -165,7 +166,7 @@ public class ThirdBodyAttractionTest extends AbstractLegacyForceModelTest {
                                                                                  PositionAngle.MEAN,
                                                                                  EME,
                                                                                  J2000,
-                                                                                 Constants.EIGEN5C_EARTH_MU);
+                                                                                 mu);
 
         FieldSpacecraftState<DerivativeStructure> initialState = new FieldSpacecraftState<>(FKO);
 
@@ -315,7 +316,7 @@ public class ThirdBodyAttractionTest extends AbstractLegacyForceModelTest {
                                                                                  PositionAngle.MEAN,
                                                                                  EME,
                                                                                  J2000,
-                                                                                 Constants.EIGEN5C_EARTH_MU);
+                                                                                 zero.add(Constants.EIGEN5C_EARTH_MU));
 
         FieldSpacecraftState<DerivativeStructure> initialState = new FieldSpacecraftState<>(FKO);
 

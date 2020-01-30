@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hipparchus.random.CorrelatedRandomVectorGenerator;
-import org.orekit.estimation.measurements.EstimatedMeasurement;
 import org.orekit.estimation.measurements.EstimationModifier;
 import org.orekit.estimation.measurements.ObservableSatellite;
 import org.orekit.estimation.measurements.ObservedMeasurement;
@@ -159,7 +158,6 @@ public abstract class AbstractMeasurementBuilder<T extends ObservedMeasurement<T
      * </p>
      * @return base weight
      * @see #getTheoreticalStandardDeviation()
-     * @see EstimatedMeasurement#getCurrentWeight()
      */
     protected double[] getBaseWeight() {
         return baseWeight.clone();

@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -42,10 +42,7 @@ import org.orekit.utils.TimeStampedFieldAngularCoordinates;
  * @author Luc Maisonobe
  * @since 9.2
  */
-public abstract class AbstractGNSSAttitudeProvider implements GNSSAttitudeProvider {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20171114L;
+abstract class AbstractGNSSAttitudeProvider implements GNSSAttitudeProvider {
 
     /** Start of validity for this provider. */
     private final AbsoluteDate validityStart;

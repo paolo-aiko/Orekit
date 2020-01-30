@@ -1,5 +1,5 @@
-' Copyright 2002-2019 CS Systèmes d'Information
-' Licensed to CS Systèmes d'Information (CS) under one or more
+' Copyright 2002-2020 CS Group
+' Licensed to CS Group (CS) under one or more
 ' contributor license agreements.  See the NOTICE file distributed with
 ' this work for additional information regarding copyright ownership.
 ' CS licenses this file to You under the Apache License, Version 2.0
@@ -28,7 +28,7 @@
 
   package org.orekit #ECEBD8 {
 
-    package attitude #DDEBD8 {
+    package attitudes #DDEBD8 {
     }
     package bodies #DDEBD8 {
     }
@@ -41,6 +41,8 @@
     package forces #DDEBD8 {
     }
     package frames #DDEBD8 {
+    }
+    package gnss #DDEBD8 {
     }
     package orbits #DDEBD8 {
     }
@@ -56,19 +58,20 @@
     }
 
     estimation  -->      propagation
-    propagation -->      attitude
+    propagation -->      attitudes
     propagation -->      forces
     forces      -->      bodies
     propagation -->      orbits
     orbits      -->      frames
-    attitude    -->      time
+    attitudes   -->      time
     orbits      -->      time
-    attitude    -->      time
     frames      -->      time
     bodies      -->      time
     bodies      -->      data
     models      -->      bodies
     models      -->      data
+    gnss        -->      attitudes
+    gnss        -->      data
     frames      -->      data
     time        -right-> data
     frames      -->      utils

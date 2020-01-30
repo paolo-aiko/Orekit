@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -17,6 +17,7 @@
 package org.orekit.propagation.events;
 
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.ode.nonstiff.AdaptiveStepsizeIntegrator;
 import org.hipparchus.ode.nonstiff.DormandPrince853Integrator;
 import org.junit.After;
@@ -64,7 +65,6 @@ public class DateDetectorTest {
         Assert.assertNull(dateDetector.getDate());
         EventDetector nodeDetector = new NodeDetector(iniOrbit, iniOrbit.getFrame()).
                 withHandler(new ContinueOnEvent<NodeDetector>() {
-                    private static final long serialVersionUID = 1L;
                     public Action eventOccurred(SpacecraftState s, NodeDetector nd, boolean increasing)
                         {
                         if (increasing) {
@@ -86,7 +86,6 @@ public class DateDetectorTest {
     public void testAutoEmbeddedTimer() {
         dateDetector = new DateDetector(maxCheck, threshold, iniDate.shiftedBy(-dt)).
                 withHandler(new ContinueOnEvent<DateDetector>() {
-                    private static final long serialVersionUID = 1L;
                     public Action eventOccurred(SpacecraftState s, DateDetector dd,  boolean increasing)
                             {
                         AbsoluteDate nextDate = s.getDate().shiftedBy(-dt);
@@ -105,7 +104,6 @@ public class DateDetectorTest {
     public void testExceptionTimer() {
         dateDetector = new DateDetector(maxCheck, threshold, iniDate.shiftedBy(dt)).
                 withHandler(new ContinueOnEvent<DateDetector>() {
-                    private static final long serialVersionUID = 1L;
                     public Action eventOccurred(SpacecraftState s, DateDetector dd, boolean increasing)
                         {
                         double step = (evtno % 2 == 0) ? 2.*maxCheck : maxCheck/2.;

@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,10 +16,10 @@
  */
 package org.orekit.propagation.events;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hipparchus.ode.events.Action;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.events.handlers.EventHandler;
 import org.orekit.time.AbsoluteDate;
@@ -43,10 +43,7 @@ import org.orekit.time.AbsoluteDate;
  *
  * @author Luc Maisonobe
  */
-public class EventsLogger implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = -8643810076248572648L;
+public class EventsLogger {
 
     /** List of occurred events. */
     private final List<LoggedEvent> log;
@@ -105,10 +102,7 @@ public class EventsLogger implements Serializable {
     }
 
     /** Class for logged events entries. */
-    public static class LoggedEvent implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20131202L;
+    public static class LoggedEvent {
 
         /** Event detector triggered. */
         private final EventDetector detector;
@@ -160,9 +154,6 @@ public class EventsLogger implements Serializable {
      * @param <T> class type for the generic version
      */
     private class LoggingWrapper<T extends EventDetector> extends AbstractDetector<LoggingWrapper<T>> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20131118L;
 
         /** Wrapped events detector. */
         private final T detector;

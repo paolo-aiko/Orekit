@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -1579,6 +1579,18 @@ public class KeplerianOrbitTest {
                                               shiftedOrbitCopy.getPVCoordinates().getVelocity()),
                             1.0e-10);
 
+    }
+
+    @Test
+    public void testIssue544() {
+        // Initial parameters
+        // In order to test the issue, we volontary set the anomaly at Double.NaN.
+        double e = 0.7311;
+        double anomaly = Double.NaN;
+        // Computes the elliptic eccentric anomaly 
+        double E = KeplerianOrbit.meanToEllipticEccentric(anomaly, e);
+        // Verify that an infinite loop did not occur
+        Assert.assertTrue(Double.isNaN(E));  
     }
 
     @Before

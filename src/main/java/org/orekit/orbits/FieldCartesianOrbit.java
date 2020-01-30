@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -57,7 +57,6 @@ import org.orekit.utils.TimeStampedFieldPVCoordinates;
  *     <li>zDot</li>
  *   </ul>
  * contained in {@link PVCoordinates}.
- * </p>
 
  * <p>
  * Note that the implementation of this class delegates all non-Cartesian related
@@ -115,7 +114,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
      * Frame#isPseudoInertial pseudo-inertial frame}
      */
     public FieldCartesianOrbit(final TimeStampedFieldPVCoordinates<T> pvaCoordinates,
-                               final Frame frame, final double mu)
+                               final Frame frame, final T mu)
         throws IllegalArgumentException {
         super(pvaCoordinates, frame, mu);
         hasNonKeplerianAcceleration = hasNonKeplerianAcceleration(pvaCoordinates, mu);
@@ -146,7 +145,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
      * Frame#isPseudoInertial pseudo-inertial frame}
      */
     public FieldCartesianOrbit(final FieldPVCoordinates<T> pvaCoordinates, final Frame frame,
-                               final FieldAbsoluteDate<T> date, final double mu)
+                               final FieldAbsoluteDate<T> date, final T mu)
         throws IllegalArgumentException {
         this(new TimeStampedFieldPVCoordinates<>(date, pvaCoordinates), frame, mu);
     }
@@ -519,7 +518,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
 
             // extract non-Keplerian part of the initial acceleration
             final FieldVector3D<T> nonKeplerianAcceleration = new FieldVector3D<>(one, getPVCoordinates().getAcceleration(),
-                                                                                  r.multiply(r2).reciprocal().multiply(+getMu()), pvP);
+                                                                                  r.multiply(r2).reciprocal().multiply(getMu()), pvP);
 
             // add the quadratic motion due to the non-Keplerian acceleration to the Keplerian motion
             final FieldVector3D<T> fixedP   = new FieldVector3D<>(one, shiftedP,
@@ -528,7 +527,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
             final T                fixedR  = fixedR2.sqrt();
             final FieldVector3D<T> fixedV  = new FieldVector3D<>(one, shiftedV,
                                                                  dt, nonKeplerianAcceleration);
-            final FieldVector3D<T> fixedA  = new FieldVector3D<>(fixedR.multiply(fixedR2).reciprocal().multiply(-getMu()), shiftedP,
+            final FieldVector3D<T> fixedA  = new FieldVector3D<>(fixedR.multiply(fixedR2).reciprocal().multiply(getMu().negate()), shiftedP,
                                                                  one, nonKeplerianAcceleration);
 
             return new FieldPVCoordinates<>(fixedP, fixedV, fixedA);
@@ -582,7 +581,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
         // coordinates of position and velocity in the orbital plane
         final T x      = a.multiply(cH.subtract(e));
         final T y      = a.negate().multiply(sE2m1).multiply(sH);
-        final T factor = zero.add(getMu()).divide(a.negate()).sqrt().divide(e.multiply(cH).subtract(1));
+        final T factor = getMu().divide(a.negate()).sqrt().divide(e.multiply(cH).subtract(1));
         final T xDot   = factor.negate().multiply(sH);
         final T yDot   =  factor.multiply(sE2m1).multiply(cH);
 
@@ -601,7 +600,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
             final T                fixedR  = fixedR2.sqrt();
             final FieldVector3D<T> fixedV  = new FieldVector3D<>(one, shiftedV,
                                                                  dt, nonKeplerianAcceleration);
-            final FieldVector3D<T> fixedA  = new FieldVector3D<>(fixedR.multiply(fixedR2).reciprocal().multiply(-getMu()), shiftedP,
+            final FieldVector3D<T> fixedA  = new FieldVector3D<>(fixedR.multiply(fixedR2).reciprocal().multiply(getMu().negate()), shiftedP,
                                                                  one, nonKeplerianAcceleration);
 
             return new FieldPVCoordinates<>(fixedP, fixedV, fixedA);
@@ -736,7 +735,7 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
     }
 
     /** {@inheritDoc} */
-    public void addKeplerContribution(final PositionAngle type, final double gm,
+    public void addKeplerContribution(final PositionAngle type, final T gm,
                                       final T[] pDot) {
 
         final FieldPVCoordinates<T> pv = getPVCoordinates();
@@ -761,7 +760,18 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
      * @return a string representation of this object
      */
     public String toString() {
-        return "Cartesian parameters: " + getPVCoordinates().toString();
+        // use only the six defining elements, like the other Orbit.toString() methods
+        final String comma = ", ";
+        final PVCoordinates pv = getPVCoordinates().toPVCoordinates();
+        final Vector3D p = pv.getPosition();
+        final Vector3D v = pv.getVelocity();
+        return "Cartesian parameters: {P(" +
+                p.getX() + comma +
+                p.getY() + comma +
+                p.getZ() + "), V(" +
+                v.getX() + comma +
+                v.getY() + comma +
+                v.getZ() + ")}";
     }
 
     @Override
@@ -770,12 +780,12 @@ public class FieldCartesianOrbit<T extends RealFieldElement<T>> extends FieldOrb
         final AbsoluteDate date = getPVCoordinates().getDate().toAbsoluteDate();
         if (hasDerivatives()) {
             // getPVCoordinates includes accelerations that will be interpreted as derivatives
-            return new CartesianOrbit(pv, getFrame(), date, getMu());
+            return new CartesianOrbit(pv, getFrame(), date, getMu().getReal());
         } else {
             // get rid of Keplerian acceleration so we don't assume
             // we have derivatives when in fact we don't have them
             return new CartesianOrbit(new PVCoordinates(pv.getPosition(), pv.getVelocity()),
-                                      getFrame(), date, getMu());
+                                      getFrame(), date, getMu().getReal());
         }
     }
 

@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -47,44 +47,6 @@ public class AngularAzEl extends AbstractMeasurement<AngularAzEl> {
     private final GroundStation station;
 
     /** Simple constructor.
-     * <p>
-     * This constructor uses 0 as the index of the propagator related
-     * to this measurement, thus being well suited for mono-satellite
-     * orbit determination.
-     * </p>
-     * @param station ground station from which measurement is performed
-     * @param date date of the measurement
-     * @param angular observed value
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @deprecated since 9.3, replaced by {@link #AngularAzEl(GroundStation, AbsoluteDate,
-     * double[], double[], double[], ObservableSatellite)}
-     */
-    @Deprecated
-    public AngularAzEl(final GroundStation station, final AbsoluteDate date,
-                       final double[] angular, final double[] sigma, final double[] baseWeight) {
-        this(station, date, angular, sigma, baseWeight, new ObservableSatellite(0));
-    }
-
-    /** Simple constructor.
-     * @param station ground station from which measurement is performed
-     * @param date date of the measurement
-     * @param angular observed value
-     * @param sigma theoretical standard deviation
-     * @param baseWeight base weight
-     * @param propagatorIndex index of the propagator related to this measurement
-     * @since 9.0
-     * @deprecated since 9.3, replaced by {@link #AngularAzEl(GroundStation, AbsoluteDate,
-     * double[], double[], double[], ObservableSatellite)}
-     */
-    @Deprecated
-    public AngularAzEl(final GroundStation station, final AbsoluteDate date,
-                       final double[] angular, final double[] sigma, final double[] baseWeight,
-                       final int propagatorIndex) {
-        this(station, date, angular, sigma, baseWeight, new ObservableSatellite(propagatorIndex));
-    }
-
-    /** Simple constructor.
      * @param station ground station from which measurement is performed
      * @param date date of the measurement
      * @param angular observed value
@@ -122,8 +84,7 @@ public class AngularAzEl extends AbstractMeasurement<AngularAzEl> {
     protected EstimatedMeasurement<AngularAzEl> theoreticalEvaluation(final int iteration, final int evaluation,
                                                                       final SpacecraftState[] states) {
 
-        final ObservableSatellite satellite = getSatellites().get(0);
-        final SpacecraftState     state     = states[satellite.getPropagatorIndex()];
+        final SpacecraftState state = states[0];
 
         // Azimuth/elevation derivatives are computed with respect to spacecraft state in inertial frame
         // and station parameters

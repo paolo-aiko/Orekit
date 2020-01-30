@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -28,9 +28,11 @@ import org.hipparchus.linear.RealVector;
 import org.orekit.errors.OrekitException;
 import org.orekit.estimation.measurements.ObservedMeasurement;
 import org.orekit.estimation.measurements.PV;
-import org.orekit.propagation.conversion.NumericalPropagatorBuilder;
+import org.orekit.propagation.conversion.IntegratedPropagatorBuilder;
 import org.orekit.propagation.conversion.PropagatorBuilder;
+import org.orekit.propagation.integration.AbstractIntegratedPropagator;
 import org.orekit.propagation.numerical.NumericalPropagator;
+import org.orekit.propagation.semianalytical.dsst.DSSTPropagator;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.ParameterDriver;
 import org.orekit.utils.ParameterDriversList;
@@ -40,7 +42,8 @@ import org.orekit.utils.ParameterDriversList.DelegatingDriver;
 /**
  * Implementation of a Kalman filter to perform orbit determination.
  * <p>
- * The filter uses a {@link NumericalPropagatorBuilder} to initialize its reference trajectory {@link NumericalPropagator}.
+ * The filter uses a {@link IntegratedPropagatorBuilder} to initialize its reference trajectory {@link NumericalPropagator}
+ * or {@link DSSTPropagator} .
  * </p>
  * <p>
  * The estimated parameters are driven by {@link ParameterDriver} objects. They are of 3 different types:<ol>
@@ -51,7 +54,6 @@ import org.orekit.utils.ParameterDriversList.DelegatingDriver;
  *   <li><b>Measurements parameters</b>: Parameters related to measurements (station biases, positions etc...).<br>
  *       They are passed down to the filter in its constructor.</li>
  * </ol>
- * </p>
  * <p>
  * The total number of estimated parameters is m, the size of the state vector.
  * </p>
@@ -71,14 +73,14 @@ import org.orekit.utils.ParameterDriversList.DelegatingDriver;
  */
 public class KalmanEstimator {
 
-    /** Builders for numerical propagators. */
-    private List<NumericalPropagatorBuilder> propagatorBuilders;
+    /** Builders for orbit propagators. */
+    private List<IntegratedPropagatorBuilder> propagatorBuilders;
 
     /** Reference date. */
     private final AbsoluteDate referenceDate;
 
     /** Kalman filter process model. */
-    private final Model processModel;
+    private final KalmanODModel processModel;
 
     /** Filter. */
     private final ExtendedKalmanFilter<MeasurementDecorator> filter;
@@ -93,7 +95,7 @@ public class KalmanEstimator {
      * @param estimatedMeasurementParameters measurement parameters to estimate
      */
     KalmanEstimator(final MatrixDecomposer decomposer,
-                    final List<NumericalPropagatorBuilder> propagatorBuilders,
+                    final List<IntegratedPropagatorBuilder> propagatorBuilders,
                     final List<CovarianceMatrixProvider> processNoiseMatricesProviders,
                     final ParameterDriversList estimatedMeasurementParameters) {
 
@@ -102,8 +104,11 @@ public class KalmanEstimator {
         this.observer           = null;
 
         // Build the process model and measurement model
-        this.processModel = new Model(propagatorBuilders, processNoiseMatricesProviders,
-                                      estimatedMeasurementParameters);
+        this.processModel = propagatorBuilders.get(0).buildKalmanModel(propagatorBuilders,
+                                                                   processNoiseMatricesProviders,
+                                                                   estimatedMeasurementParameters);
+        //this.processModel = new KalmanModel(propagatorBuilders, processNoiseMatricesProviders,
+                                      //estimatedMeasurementParameters);
 
         this.filter = new ExtendedKalmanFilter<>(decomposer, processModel, processModel.getEstimate());
 
@@ -208,7 +213,7 @@ public class KalmanEstimator {
      * @param observedMeasurement the measurement to process
      * @return estimated propagators
      */
-    public NumericalPropagator[] estimationStep(final ObservedMeasurement<?> observedMeasurement) {
+    public AbstractIntegratedPropagator[] estimationStep(final ObservedMeasurement<?> observedMeasurement) {
         try {
             final ProcessEstimate estimate = filter.estimationStep(decorate(observedMeasurement));
             processModel.finalizeEstimation(observedMeasurement, estimate);
@@ -225,8 +230,8 @@ public class KalmanEstimator {
      * @param observedMeasurements the measurements to process in <em>chronologically sorted</em> order
      * @return estimated propagators
      */
-    public NumericalPropagator[] processMeasurements(final Iterable<ObservedMeasurement<?>> observedMeasurements) {
-        NumericalPropagator[] propagators = null;
+    public AbstractIntegratedPropagator[] processMeasurements(final Iterable<ObservedMeasurement<?>> observedMeasurements) {
+        AbstractIntegratedPropagator[] propagators = null;
         for (ObservedMeasurement<?> observedMeasurement : observedMeasurements) {
             propagators = estimationStep(observedMeasurement);
         }

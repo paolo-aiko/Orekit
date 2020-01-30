@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -58,7 +58,7 @@ public class FieldAttitudeTest {
 
     private <T extends RealFieldElement<T>> void doTestShift(final Field<T> field){
         T zero = field.getZero();
-        T one = field.getOne();
+        T one  = field.getOne();
         T rate = one.multiply(2 * FastMath.PI / (12 * 60));
         FieldAttitude<T> attitude = new FieldAttitude<>(new FieldAbsoluteDate<>(field), FramesFactory.getEME2000(),
                         new FieldRotation<>(one, zero, zero, zero, false),
@@ -134,10 +134,10 @@ public class FieldAttitudeTest {
         final FieldVector3D<T> position = new FieldVector3D<>(zero.add(3220103.), zero.add(69623.), zero.add(6449822.));
         final FieldVector3D<T> velocity = new FieldVector3D<>(zero.add(6414.7), zero.add(-2006.), zero.add(-3180.));
         final FieldCircularOrbit<T> initialOrbit = new FieldCircularOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                                            FramesFactory.getEME2000(), date, ehMu);
+                                                                            FramesFactory.getEME2000(), date, zero.add(ehMu));
 
         FieldEcksteinHechlerPropagator<T> propagator =
-                new FieldEcksteinHechlerPropagator<>(initialOrbit, ae, ehMu, c20, c30, c40, c50, c60);
+                new FieldEcksteinHechlerPropagator<>(initialOrbit, ae, zero.add(ehMu), c20, c30, c40, c50, c60);
         OneAxisEllipsoid earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                                                       Constants.WGS84_EARTH_FLATTENING,
                                                       FramesFactory.getITRF(IERSConventions.IERS_2010, true));

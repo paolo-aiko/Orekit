@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -22,15 +22,15 @@ import org.orekit.estimation.measurements.EstimatedMeasurement;
 import org.orekit.estimation.measurements.ObservedMeasurement;
 import org.orekit.orbits.Orbit;
 
-/** Observer for {@link Model model} calls.
+/** Observer for {@link BatchLSModel model} calls.
  * <p>
  * This interface is an internal one intended to pass the orbit
- * back from {@link Model model} to {@link BatchLSEstimator estimator}.
+ * back from {@link BatchLSModel model} to {@link BatchLSEstimator estimator}.
  * </p>
  * @author Luc Maisonobe
  * @since 8.0
  */
-interface ModelObserver {
+public interface ModelObserver {
 
     /** Notification callback for orbit changes.
      * @param orbits current estimated orbits

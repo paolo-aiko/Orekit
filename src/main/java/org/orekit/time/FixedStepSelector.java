@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -21,18 +21,19 @@ import java.util.List;
 
 import org.hipparchus.util.FastMath;
 
-
 /** Selector generating a continuous stream of dates separated by a constant step.
  * <p>
  * The dates can be aligned to whole steps in some time scale. So for example
  * if a step of 60s is used and the alignment time scale is set to
- * {@link org.orekit.time.TimeScalesFactory#getUTC() UTC}, dates will be selected
+ * {@link org.orekit.time.TimeScales#getUTC() UTC}, dates will be selected
  * at whole minutes in UTC time.
  * </p>
  * <p>
- * This class stores internally the last selected dates, so it is <em>not</em>
- * thread-safe. A separate selector should be used for each thread in multi-threading
- * context.
+ * BEWARE! This class stores internally the last selected dates, so it is <em>neither</em>
+ * reusable across several {@link org.orekit.estimation.measurements.generation.EventBasedScheduler
+ * fixed step} or {@link org.orekit.estimation.measurements.generation.ContinuousScheduler
+ * continuous} schedulers, <em>nor</em> thread-safe. A separate selector should be used for each
+ * scheduler and for each thread in multi-threading context.
  * </p>
  * @author Luc Maisonobe
  * @since 9.3

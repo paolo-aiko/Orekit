@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -32,8 +32,7 @@ import org.orekit.estimation.measurements.ObservedMeasurement;
  * @author Luc Maisonobe
  * @since 9.2
  */
-public class DynamicOutlierFilter<T extends ObservedMeasurement<T>> extends OutlierFilter<T>
-{
+public class DynamicOutlierFilter<T extends ObservedMeasurement<T>> extends OutlierFilter<T> {
     /** Current value of sigma. */
     private double[] sigma;
 
@@ -51,14 +50,14 @@ public class DynamicOutlierFilter<T extends ObservedMeasurement<T>> extends Outl
      * @return The current value of sigma
      */
     public double[] getSigma() {
-        return sigma;
+        return sigma == null ? null : sigma.clone();
     }
 
     /** Set the current value of sigma.
      * @param sigma The value of sigma to set
      */
     public void setSigma(final double[] sigma) {
-        this.sigma = sigma;
+        this.sigma = sigma == null ? null : sigma.clone();
     }
 
     /** {@inheritDoc} */

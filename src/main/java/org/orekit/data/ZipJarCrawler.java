@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -32,11 +32,11 @@ import java.util.zip.ZipInputStream;
 
 import org.hipparchus.exception.DummyLocalizable;
 import org.hipparchus.exception.LocalizedCoreFormats;
+import org.orekit.annotation.DefaultDataContext;
 import org.orekit.errors.OrekitException;
 
 
 /** Helper class for loading data files from a zip/jar archive.
-
  * <p>
  * This class browses all entries in a zip/jar archive in filesystem or in classpath.
  * </p>
@@ -46,7 +46,8 @@ import org.orekit.errors.OrekitException;
  * loader, all of them will be loaded.
  * </p>
  * <p>
- * Gzip-compressed files are supported.
+ * All {@link DataProvidersManager#addFilter(DataFilter) registered}
+ * {@link DataFilter filters} are applied.
  * </p>
  * <p>
  * Zip archives entries are supported recursively.
@@ -130,49 +131,63 @@ public class ZipJarCrawler implements DataProvider {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
+    @Deprecated
+    @DefaultDataContext
     public boolean feed(final Pattern supported, final DataLoader visitor) {
+        return feed(supported, visitor, DataContext.getDefault().getDataProvidersManager());
+    }
+
+    /** {@inheritDoc} */
+    public boolean feed(final Pattern supported,
+                        final DataLoader visitor,
+                        final DataProvidersManager manager) {
 
         try {
 
             // open the raw data stream
-            Archive archive = null;
-            try {
-                if (file != null) {
-                    archive = new Archive(new FileInputStream(file));
-                } else if (resource != null) {
-                    archive = new Archive(classLoader.getResourceAsStream(resource));
-                } else {
-                    archive = new Archive(url.openConnection().getInputStream());
-                }
-
-                return feed(name, supported, visitor, archive);
-
-            } finally {
-                if (archive != null) {
-                    archive.close();
-                }
+            try (InputStream in = openStream();
+                 Archive archive = new Archive(in)) {
+                return feed(name, supported, visitor, manager, archive);
             }
 
-        } catch (IOException ioe) {
-            throw new OrekitException(ioe, new DummyLocalizable(ioe.getMessage()));
-        } catch (ParseException pe) {
-            throw new OrekitException(pe, new DummyLocalizable(pe.getMessage()));
+        } catch (IOException | ParseException e) {
+            throw new OrekitException(e, new DummyLocalizable(e.getMessage()));
         }
 
+    }
+
+    /**
+     * Open a stream to the raw archive.
+     *
+     * @return an open stream.
+     * @throws IOException if the stream could not be opened.
+     */
+    private InputStream openStream() throws IOException {
+        if (file != null) {
+            return new FileInputStream(file);
+        } else if (resource != null) {
+            return classLoader.getResourceAsStream(resource);
+        } else {
+            return url.openConnection().getInputStream();
+        }
     }
 
     /** Feed a data file loader by browsing the entries in a zip/jar.
      * @param prefix prefix to use for name
      * @param supported pattern for file names supported by the visitor
      * @param visitor data file visitor to use
+     * @param manager used for filtering data.
      * @param archive archive to read
      * @return true if something has been loaded
      * @exception IOException if data cannot be read
      * @exception ParseException if data cannot be read
      */
-    private boolean feed(final String prefix, final Pattern supported,
-                         final DataLoader visitor, final Archive archive)
+    private boolean feed(final String prefix,
+                         final Pattern supported,
+                         final DataLoader visitor,
+                         final DataProvidersManager manager,
+                         final Archive archive)
         throws IOException, ParseException {
 
         OrekitException delayedException = null;
@@ -185,12 +200,12 @@ public class ZipJarCrawler implements DataProvider {
 
                 if (visitor.stillAcceptsData() && !entry.isDirectory()) {
 
-                    final String fullName = prefix + "!" + entry.getName();
+                    final String fullName = prefix + "!/" + entry.getName();
 
                     if (ZIP_ARCHIVE_PATTERN.matcher(entry.getName()).matches()) {
 
                         // recurse inside the archive entry
-                        loaded = feed(fullName, supported, visitor, new Archive(entry)) || loaded;
+                        loaded = feed(fullName, supported, visitor, manager, new Archive(entry)) || loaded;
 
                     } else {
 
@@ -203,7 +218,7 @@ public class ZipJarCrawler implements DataProvider {
 
                         // apply all registered filters
                         NamedData data = new NamedData(entryName, () -> entry);
-                        data = DataProvidersManager.getInstance().applyAllFilters(data);
+                        data = manager.applyAllFilters(data);
 
                         if (supported.matcher(data.getName()).matches()) {
                             // visit the current file
@@ -343,6 +358,42 @@ public class ZipJarCrawler implements DataProvider {
                     goToNext();
                     closed = true;
                 }
+            }
+
+            @Override
+            public int available() throws IOException {
+                return zip.available();
+            }
+
+            @Override
+            public int read(final byte[] b, final int off, final int len)
+                    throws IOException {
+                return zip.read(b, off, len);
+            }
+
+            @Override
+            public long skip(final long n) throws IOException {
+                return zip.skip(n);
+            }
+
+            @Override
+            public boolean markSupported() {
+                return zip.markSupported();
+            }
+
+            @Override
+            public void mark(final int readlimit) {
+                zip.mark(readlimit);
+            }
+
+            @Override
+            public void reset() throws IOException {
+                zip.reset();
+            }
+
+            @Override
+            public int read(final byte[] b) throws IOException {
+                return zip.read(b);
             }
 
         }

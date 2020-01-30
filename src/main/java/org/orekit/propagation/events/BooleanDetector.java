@@ -1,5 +1,5 @@
 /* Contributed in the public domain.
- * Licensed to CS Systèmes d'Information (CS) under one or more
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -58,9 +58,6 @@ import org.orekit.time.AbsoluteDate;
  * @see EventSlopeFilter
  */
 public class BooleanDetector extends AbstractDetector<BooleanDetector> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20170410L;
 
     /** Original detectors: the operands. */
     private final List<EventDetector> detectors;
@@ -250,7 +247,7 @@ public class BooleanDetector extends AbstractDetector<BooleanDetector> {
         }
     }
 
-    /** Local, serializable class for operator. */
+    /** Local class for operator. */
     private enum Operator {
 
         /** And operator. */

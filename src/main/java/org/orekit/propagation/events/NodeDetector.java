@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,6 +16,7 @@
  */
 package org.orekit.propagation.events;
 
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.hipparchus.util.MathUtils;
 import org.orekit.frames.Frame;
@@ -30,10 +31,8 @@ import org.orekit.propagation.events.handlers.StopOnIncreasing;
 /** Finder for node crossing events.
  * <p>This class finds equator crossing events (i.e. ascending
  * or descending node crossing).</p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#CONTINUE continue}
- * propagation at descending node crossing and to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#STOP stop} propagation
+ * <p>The default implementation behavior is to {@link Action#CONTINUE continue}
+ * propagation at descending node crossing and to {@link Action#STOP stop} propagation
  * at ascending node crossing. This can be changed by calling
  * {@link #withHandler(EventHandler)} after construction.</p>
  * <p>Beware that node detection will fail for almost equatorial orbits. If
@@ -46,9 +45,6 @@ import org.orekit.propagation.events.handlers.StopOnIncreasing;
  * @author Luc Maisonobe
  */
 public class NodeDetector extends AbstractDetector<NodeDetector> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20131118L;
 
     /** Frame in which the equator is defined. */
     private final Frame frame;

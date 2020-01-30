@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -308,6 +308,8 @@ public class FieldAngularCoordinates<T extends RealFieldElement<T>> {
                     // simple special case, v₂ is redundant with v₁, we just ignore it
                     // use the simplest Ω: orthogonal to both v₁ and c₁
                     omega = new FieldVector3D<>(v12.reciprocal(), v1.crossProduct(c1));
+                } else {
+                    throw miae;
                 }
             } else {
                 throw miae;

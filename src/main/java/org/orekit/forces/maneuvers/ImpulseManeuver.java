@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -19,6 +19,7 @@ package org.orekit.forces.maneuvers;
 import java.util.Map;
 
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.orekit.attitudes.Attitude;
 import org.orekit.attitudes.AttitudeProvider;
@@ -36,9 +37,8 @@ import org.orekit.utils.PVCoordinates;
  * that can be provided to any {@link org.orekit.propagation.Propagator
  * Propagator}.</p>
  * <p>The maneuver is triggered when an underlying event generates a
- * {@link org.orekit.propagation.events.handlers.EventHandler.Action#STOP STOP} event,
- * in which case this class will generate a {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#RESET_STATE RESET_STATE}
+ * {@link Action#STOP STOP} event, in which case this class will generate a {@link
+ * Action#RESET_STATE RESET_STATE}
  * event (the stop event from the underlying object is therefore filtered out).
  * In the simple cases, the underlying event detector may be a basic
  * {@link org.orekit.propagation.events.DateDetector date event}, but it
@@ -62,9 +62,6 @@ import org.orekit.utils.PVCoordinates;
  * @author Luc Maisonobe
  */
 public class ImpulseManeuver<T extends EventDetector> extends AbstractDetector<ImpulseManeuver<T>> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20131118L;
 
     /** The attitude to override during the maneuver, if set. */
     private final AttitudeProvider attitudeOverride;
@@ -189,11 +186,11 @@ public class ImpulseManeuver<T extends EventDetector> extends AbstractDetector<I
     private static class Handler<T extends EventDetector> implements EventHandler<ImpulseManeuver<T>> {
 
         /** {@inheritDoc} */
-        public EventHandler.Action eventOccurred(final SpacecraftState s, final ImpulseManeuver<T> im,
-                                                 final boolean increasing) {
+        public Action eventOccurred(final SpacecraftState s, final ImpulseManeuver<T> im,
+                                    final boolean increasing) {
 
             // filter underlying event
-            final EventHandler.Action underlyingAction = im.trigger.eventOccurred(s, increasing);
+            final Action underlyingAction = im.trigger.eventOccurred(s, increasing);
 
             return (underlyingAction == Action.STOP) ? Action.RESET_STATE : Action.CONTINUE;
 

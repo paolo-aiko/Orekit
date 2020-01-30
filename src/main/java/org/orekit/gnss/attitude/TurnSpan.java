@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,8 +16,6 @@
  */
 package org.orekit.gnss.attitude;
 
-import java.io.Serializable;
-
 import org.hipparchus.util.FastMath;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeStamped;
@@ -33,10 +31,7 @@ import org.orekit.time.TimeStamped;
  * @author Luc Maisonobe
  * @since 9.3
  */
-class TurnSpan implements Serializable, TimeStamped {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20180626L;
+class TurnSpan implements TimeStamped {
 
     /** Margin in seconds after turn end. */
     private final double endMargin;

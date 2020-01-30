@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -17,6 +17,7 @@
 package org.orekit.propagation.events;
 
 import org.hipparchus.RealFieldElement;
+import org.hipparchus.ode.events.Action;
 import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.FieldGeodeticPoint;
 import org.orekit.frames.Frame;
@@ -28,10 +29,8 @@ import org.orekit.utils.FieldPVCoordinates;
 /** Finder for satellite altitude crossing events.
  * <p>This class finds altitude events (i.e. satellite crossing
  * a predefined altitude level above ground).</p>
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#CONTINUE
- * continue} propagation when ascending and to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#STOP stop}
+ * <p>The default implementation behavior is to {@link Action#CONTINUE
+ * continue} propagation when ascending and to {@link Action#STOP stop}
  * propagation when descending. This can be changed by calling
  * {@link #withHandler(FieldEventHandler)} after construction.</p>
  * @see org.orekit.propagation.FieldPropagator#addEventDetector(FieldEventDetector)

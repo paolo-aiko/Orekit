@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -26,7 +26,7 @@ import org.orekit.utils.TimeStampedAngularCoordinates;
 import org.orekit.utils.TimeStampedFieldAngularCoordinates;
 
 /**
- * Attitude providers for GPS block IIF navigation satellites.
+ * Attitude providers for GPS block IIR navigation satellites.
  * <p>
  * This class is based on the May 2017 version of J. Kouba eclips.f
  * subroutine available at <a href="http://acc.igs.org/orbits">IGS Analysis
@@ -43,11 +43,8 @@ public class GPSBlockIIR extends AbstractGNSSAttitudeProvider {
     /** Default yaw rates for all spacecrafts in radians per seconds. */
     public static final double DEFAULT_YAW_RATE = FastMath.toRadians(0.2);
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20171114L;
-
     /** Margin on turn end. */
-    private final double END_MARGIN = 1800.0;
+    private static final double END_MARGIN = 1800.0;
 
     /** Yaw rate. */
     private final double yawRate;

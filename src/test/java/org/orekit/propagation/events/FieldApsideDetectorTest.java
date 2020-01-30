@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -56,11 +56,11 @@ public class FieldApsideDetectorTest {
         final FieldAbsoluteDate<T> date = new FieldAbsoluteDate<>(field, 2003, 9, 16, utc);
         final FieldOrbit<T> orbit = new FieldCartesianOrbit<>(new FieldPVCoordinates<>(position,  velocity),
                                                               FramesFactory.getEME2000(), date,
-                                                              Constants.EIGEN5C_EARTH_MU);
+                                                              zero.add(Constants.EIGEN5C_EARTH_MU));
         FieldEcksteinHechlerPropagator<T> propagator =
                         new FieldEcksteinHechlerPropagator<>(orbit,
                                                              Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS,
-                                                             Constants.EIGEN5C_EARTH_MU,
+                                                             zero.add(Constants.EIGEN5C_EARTH_MU),
                                                              Constants.EIGEN5C_EARTH_C20,
                                                              Constants.EIGEN5C_EARTH_C30,
                                                              Constants.EIGEN5C_EARTH_C40,

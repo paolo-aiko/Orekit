@@ -1,5 +1,5 @@
 /* Contributed in the public domain.
- * Licensed to CS Systèmes d'Information (CS) under one or more
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -18,6 +18,7 @@ package org.orekit.propagation.events.handlers;
 
 import java.util.List;
 
+import org.hipparchus.ode.events.Action;
 import org.junit.Assert;
 import org.junit.Test;
 import org.orekit.frames.Frame;
@@ -27,7 +28,6 @@ import org.orekit.orbits.Orbit;
 import org.orekit.orbits.PositionAngle;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.events.DateDetector;
-import org.orekit.propagation.events.handlers.EventHandler.Action;
 import org.orekit.propagation.events.handlers.RecordAndContinue.Event;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.Constants;

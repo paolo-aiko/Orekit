@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -22,6 +22,7 @@ import org.hipparchus.Field;
 import org.hipparchus.RealFieldElement;
 import org.hipparchus.geometry.euclidean.threed.FieldVector3D;
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.orekit.attitudes.Attitude;
 import org.orekit.attitudes.AttitudeProvider;
@@ -35,8 +36,6 @@ import org.orekit.propagation.events.DateDetector;
 import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.FieldDateDetector;
 import org.orekit.propagation.events.FieldEventDetector;
-import org.orekit.propagation.events.handlers.EventHandler;
-import org.orekit.propagation.events.handlers.FieldEventHandler;
 import org.orekit.propagation.numerical.FieldTimeDerivativesEquations;
 import org.orekit.propagation.numerical.TimeDerivativesEquations;
 import org.orekit.time.AbsoluteDate;
@@ -85,13 +84,10 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     /** Driver for flow rate parameter. */
     private final ParameterDriver flowRateDriver;
 
-    /** State of the engine. */
-    private boolean firing;
-
-    /** Start of the maneuver. */
+    /** Nominal start of the maneuver. */
     private final AbsoluteDate startDate;
 
-    /** End of the maneuver. */
+    /** Nominal end of the maneuver. */
     private final AbsoluteDate endDate;
 
     /** The attitude to override during the maneuver, if set. */
@@ -110,6 +106,15 @@ public class ConstantThrustManeuver extends AbstractForceModel {
      * @since 9.2
      */
     private final String name;
+
+    /** Triggered date of engine start. */
+    private AbsoluteDate triggeredStart;
+
+    /** Triggered date of engine stop. */
+    private AbsoluteDate triggeredEnd;
+
+    /** Propagation direction. */
+    private boolean forward;
 
     /** Simple constructor for a constant direction and constant thrust.
      * <p>
@@ -215,10 +220,11 @@ public class ConstantThrustManeuver extends AbstractForceModel {
         }
 
         final double flowRate  = -thrust / (Constants.G0_STANDARD_GRAVITY * isp);
-        this.attitudeOverride = attitudeOverride;
-        this.direction = direction.normalize();
-        this.name = name;
-        firing = false;
+        this.attitudeOverride  = attitudeOverride;
+        this.direction         = direction.normalize();
+        this.name              = name;
+        this.triggeredStart    = null;
+        this.triggeredEnd      = null;
 
         // Build the parameter drivers, using maneuver name as prefix
         ParameterDriver tpd = null;
@@ -249,13 +255,23 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     public void init(final SpacecraftState s0, final AbsoluteDate t) {
         // set the initial value of firing
         final AbsoluteDate sDate = s0.getDate();
-        final boolean isForward = sDate.compareTo(t) < 0;
-        final boolean isBetween =
-                startDate.compareTo(sDate) < 0 && endDate.compareTo(sDate) > 0;
+        forward                 = sDate.compareTo(t) < 0;
+        final boolean isBetween = sDate.isBetween(startDate, endDate);
         final boolean isOnStart = startDate.compareTo(sDate) == 0;
         final boolean isOnEnd = endDate.compareTo(sDate) == 0;
 
-        firing = isBetween || (isForward && isOnStart) || (!isForward && isOnEnd);
+        triggeredStart = null;
+        triggeredEnd   = null;
+        if (forward) {
+            if (isBetween || isOnStart) {
+                triggeredStart = startDate;
+            }
+        } else {
+            if (isBetween || isOnEnd) {
+                triggeredEnd = endDate;
+            }
+        }
+
     }
 
     /** Get the thrust.
@@ -333,8 +349,7 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     /** {@inheritDoc} */
     @Override
     public void addContribution(final SpacecraftState s, final TimeDerivativesEquations adder) {
-
-        if (firing) {
+        if (isFiring(s)) {
 
             // compute thrust acceleration in inertial frame
             final double[] parameters = getParameters();
@@ -351,7 +366,7 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     public <T extends RealFieldElement<T>> void
         addContribution(final FieldSpacecraftState<T> s,
                         final FieldTimeDerivativesEquations<T> adder) {
-        if (firing) {
+        if (isFiring(s)) {
 
             final T[] parameters = getParameters(s.getDate().getField());
 
@@ -366,7 +381,7 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     /** {@inheritDoc} */
     @Override
     public Vector3D acceleration(final SpacecraftState state, final double[] parameters) {
-        if (firing) {
+        if (isFiring(state)) {
             final double thrust = parameters[0];
             final Attitude attitude =
                             attitudeOverride == null ?
@@ -385,7 +400,7 @@ public class ConstantThrustManeuver extends AbstractForceModel {
     @Override
     public <T extends RealFieldElement<T>> FieldVector3D<T> acceleration(final FieldSpacecraftState<T> s,
                                                                          final T[] parameters) {
-        if (firing) {
+        if (isFiring(s)) {
             // compute thrust acceleration in inertial frame
             final T thrust = parameters[0];
             final FieldAttitude<T> attitude =
@@ -411,13 +426,13 @@ public class ConstantThrustManeuver extends AbstractForceModel {
         // at end time and disabled at start time
         final DateDetector startDetector = new DateDetector(startDate).
             withHandler((SpacecraftState state, DateDetector d, boolean increasing) -> {
-                firing = d.isForward();
-                return EventHandler.Action.RESET_DERIVATIVES;
+                triggeredStart = state.getDate();
+                return Action.RESET_DERIVATIVES;
             });
         final DateDetector endDetector = new DateDetector(endDate).
             withHandler((SpacecraftState state, DateDetector d, boolean increasing) -> {
-                firing = !d.isForward();
-                return EventHandler.Action.RESET_DERIVATIVES;
+                triggeredEnd = state.getDate();
+                return Action.RESET_DERIVATIVES;
             });
         return Stream.of(startDetector, endDetector);
     }
@@ -439,15 +454,82 @@ public class ConstantThrustManeuver extends AbstractForceModel {
         // at end time and disabled at start time
         final FieldDateDetector<T> startDetector = new FieldDateDetector<>(new FieldAbsoluteDate<>(field, startDate)).
             withHandler((FieldSpacecraftState<T> state, FieldDateDetector<T> d, boolean increasing) -> {
-                firing = d.isForward();
-                return FieldEventHandler.Action.RESET_DERIVATIVES;
+                triggeredStart = state.getDate().toAbsoluteDate();
+                return Action.RESET_DERIVATIVES;
             });
         final FieldDateDetector<T> endDetector = new FieldDateDetector<>(new FieldAbsoluteDate<>(field, endDate)).
             withHandler((FieldSpacecraftState<T> state, FieldDateDetector<T> d, boolean increasing) -> {
-                firing = !d.isForward();
-                return FieldEventHandler.Action.RESET_DERIVATIVES;
+                triggeredEnd = state.getDate().toAbsoluteDate();
+                return Action.RESET_DERIVATIVES;
             });
         return Stream.of(startDetector, endDetector);
+    }
+
+    /** Check if maneuvering is on.
+     * @param s current state
+     * @return true if maneuver is on at this state
+     * @since 10.1
+     */
+    public boolean isFiring(final SpacecraftState s) {
+        return isFiring(s.getDate());
+    }
+
+    /** Check if maneuvering is on.
+     * @param s current state
+     * @param <T> type of the field elements
+     * @return true if maneuver is on at this state
+     * @since 10.1
+     */
+    public <T extends RealFieldElement<T>> boolean isFiring(final FieldSpacecraftState<T> s) {
+        return isFiring(s.getDate().toAbsoluteDate());
+    }
+
+    /** Check if maneuvering is on.
+     * @param date current date
+     * @return true if maneuver is on at this date
+     * @since 10.1
+     */
+    public boolean isFiring(final AbsoluteDate date) {
+        if (forward) {
+            if (triggeredStart == null) {
+                // explicitly ignores state date, as propagator did not allow us to introduce discontinuity
+                return false;
+            } else if (date.durationFrom(triggeredStart) < 0.0) {
+                // we are unambiguously before maneuver start
+                return false;
+            } else {
+                if (triggeredEnd == null) {
+                    // explicitly ignores state date, as propagator did not allow us to introduce discontinuity
+                    return true;
+                } else if (date.durationFrom(triggeredEnd) < 0.0) {
+                    // we are unambiguously before maneuver end
+                    return true;
+                } else {
+                    // we are at or after maneuver end
+                    return false;
+                }
+            }
+        } else {
+            if (triggeredEnd == null) {
+                // explicitly ignores state date, as propagator did not allow us to introduce discontinuity
+                return false;
+            } else if (date.durationFrom(triggeredEnd) > 0.0) {
+                // we are unambiguously after maneuver end
+                return false;
+            } else {
+                if (triggeredStart == null) {
+                    // explicitly ignores state date, as propagator did not allow us to introduce discontinuity
+                    return true;
+                } else if (date.durationFrom(triggeredStart) > 0.0) {
+                    // we are unambiguously after maneuver start
+                    return true;
+                } else {
+                    // we are at or before maneuver start
+                    return false;
+                }
+            }
+        }
+
     }
 
 }

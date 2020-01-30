@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -31,6 +31,16 @@ import org.hipparchus.util.MathUtils;
  * @author Luc Maisonobe
  */
 public class GeodeticPoint implements Serializable {
+
+    /** North pole.
+     * @since 10.0
+     */
+    public static final GeodeticPoint NORTH_POLE = new GeodeticPoint(+0.5 * FastMath.PI, 0.0, 0.0);
+
+    /** South pole.
+     * @since 10.0
+     */
+    public static final GeodeticPoint SOUTH_POLE = new GeodeticPoint(-0.5 * FastMath.PI, 0.0, 0.0);
 
     /** Serializable UID. */
     private static final long serialVersionUID = 7862466825590075399L;

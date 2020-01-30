@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,6 +16,7 @@
  */
 package org.orekit.propagation.events;
 
+import org.hipparchus.ode.events.Action;
 import org.orekit.frames.TopocentricFrame;
 import org.orekit.models.AtmosphericRefractionModel;
 import org.orekit.propagation.SpacecraftState;
@@ -29,19 +30,14 @@ import org.orekit.utils.ElevationMask;
  * setting of azimuth and/or elevation bounds or a ground azimuth/elevation
  * mask input. Each calculation be configured to use atmospheric refraction
  * as well.
- * <p>The default implementation behavior is to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#CONTINUE continue}
- * propagation at raising and to {@link
- * org.orekit.propagation.events.handlers.EventHandler.Action#STOP stop} propagation
+ * <p>The default implementation behavior is to {@link Action#CONTINUE continue}
+ * propagation at raising and to {@link Action#STOP stop} propagation
  * at setting. This can be changed by calling
  * {@link #withHandler(EventHandler)} after construction.</p>
  * @author Hank Grabowski
  * @since 6.1
  */
 public class ElevationDetector extends AbstractDetector<ElevationDetector> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20131118L;
 
     /** Elevation mask used for calculations, if defined. */
     private final ElevationMask elevationMask;

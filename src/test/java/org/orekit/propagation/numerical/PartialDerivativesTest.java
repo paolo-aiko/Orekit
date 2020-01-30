@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -39,7 +39,6 @@ import org.orekit.forces.ForceModel;
 import org.orekit.forces.drag.DragForce;
 import org.orekit.forces.drag.DragSensitive;
 import org.orekit.forces.drag.IsotropicDrag;
-import org.orekit.forces.drag.atmosphere.HarrisPriester;
 import org.orekit.forces.gravity.HolmesFeatherstoneAttractionModel;
 import org.orekit.forces.gravity.NewtonianAttraction;
 import org.orekit.forces.gravity.ThirdBodyAttraction;
@@ -49,6 +48,7 @@ import org.orekit.forces.gravity.potential.SHMFormatReader;
 import org.orekit.forces.maneuvers.ConstantThrustManeuver;
 import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
+import org.orekit.models.earth.atmosphere.HarrisPriester;
 import org.orekit.orbits.KeplerianOrbit;
 import org.orekit.orbits.Orbit;
 import org.orekit.orbits.OrbitType;
@@ -422,22 +422,6 @@ public class PartialDerivativesTest {
         NumericalPropagator propagator =
                 setUpPropagator(initialOrbit, dP, OrbitType.EQUINOCTIAL, PositionAngle.TRUE);
         new PartialDerivativesEquations("partials", propagator).getMapper();
-     }
-
-    @Deprecated
-    @Test
-    public void testDeprecatedMethods() {
-        Orbit initialOrbit =
-                new KeplerianOrbit(8000000.0, 0.01, 0.1, 0.7, 0, 1.2, PositionAngle.TRUE,
-                                   FramesFactory.getEME2000(), AbsoluteDate.J2000_EPOCH,
-                                   Constants.EIGEN5C_EARTH_MU);
-
-        double dP = 0.001;
-        NumericalPropagator propagator =
-                setUpPropagator(initialOrbit, dP, OrbitType.EQUINOCTIAL, PositionAngle.TRUE);
-        PartialDerivativesEquations partials = new PartialDerivativesEquations("partials", propagator);
-        partials.setInitialJacobians(new SpacecraftState(initialOrbit), 6);
-        Assert.assertEquals(6, partials.getMapper().getStateDimension());
      }
 
     @Test(expected=OrekitException.class)

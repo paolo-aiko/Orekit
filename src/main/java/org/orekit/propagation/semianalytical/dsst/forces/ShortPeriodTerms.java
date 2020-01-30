@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -16,7 +16,6 @@
  */
 package org.orekit.propagation.semianalytical.dsst.forces;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +30,7 @@ import org.orekit.time.AbsoluteDate;
  * @author Luc Maisonobe
  * @since 7.1
  */
-public interface ShortPeriodTerms extends Serializable {
+public interface ShortPeriodTerms {
 
     /** Evaluate the contributions of the short period terms.
      * @param meanOrbit mean orbit to which the short period contribution applies

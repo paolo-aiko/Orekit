@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -27,13 +27,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.orekit.bodies.CelestialBodyFactory;
+import org.orekit.data.DataContext;
 import org.orekit.data.DataProvidersManager;
+import org.orekit.data.LazyLoadedDataContext;
 import org.orekit.forces.gravity.potential.GravityFieldFactory;
 import org.orekit.frames.EOPEntry;
 import org.orekit.frames.EOPHistoryLoader;
 import org.orekit.frames.FramesFactory;
 import org.orekit.frames.ITRFVersion;
-import org.orekit.models.earth.GlobalPressureTemperature2Model;
+import org.orekit.models.earth.weather.GlobalPressureTemperature2Model;
 import org.orekit.orbits.FieldCartesianOrbit;
 import org.orekit.orbits.FieldCircularOrbit;
 import org.orekit.orbits.FieldEquinoctialOrbit;
@@ -42,7 +44,7 @@ import org.orekit.propagation.semianalytical.dsst.utilities.JacobiPolynomials;
 import org.orekit.propagation.semianalytical.dsst.utilities.NewcombOperators;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.DateComponents;
-import org.orekit.time.GPSDate;
+import org.orekit.time.GNSSDate;
 import org.orekit.time.TimeScale;
 import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.Constants;
@@ -66,6 +68,7 @@ public class Utils {
     public static final double mu =  3.986004415e+14;
 
     public static void clearFactories() {
+        DataContext.setDefault(new LazyLoadedDataContext());
         clearFactoryMaps(CelestialBodyFactory.class);
         CelestialBodyFactory.clearCelestialBodyLoaders();
         clearFactoryMaps(FramesFactory.class);
@@ -86,16 +89,16 @@ public class Utils {
         FramesFactory.clearEOPHistoryLoaders();
         FramesFactory.setEOPContinuityThreshold(5 * Constants.JULIAN_DAY);
         TimeScalesFactory.clearUTCTAIOffsetsLoaders();
-        GPSDate.setRolloverReference(null);
+        GNSSDate.setRolloverReference(null);
         GravityFieldFactory.clearPotentialCoefficientsReaders();
         GravityFieldFactory.clearOceanTidesReaders();
-        DataProvidersManager.getInstance().clearProviders();
-        DataProvidersManager.getInstance().clearFilters();
-        DataProvidersManager.getInstance().clearLoadedDataNames();
+        DataContext.getDefault().getDataProvidersManager().clearProviders();
+        DataContext.getDefault().getDataProvidersManager().clearFilters();
+        DataContext.getDefault().getDataProvidersManager().clearLoadedDataNames();
         
     }
 
-    public static void setDataRoot(String root) {
+    public static DataContext setDataRoot(String root) {
         try {
             clearFactories();
             StringBuffer buffer = new StringBuffer();
@@ -108,6 +111,7 @@ public class Utils {
                 buffer.append(componentPath);
             }
             System.setProperty(DataProvidersManager.OREKIT_DATA_PATH, buffer.toString());
+            return DataContext.getDefault();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -159,6 +163,7 @@ public class Utils {
                                               double[][] data) {
         IERSConventions.NutationCorrectionConverter converter =
                 conventions.getNutationCorrectionConverter();
+        final TimeScale utc = DataContext.getDefault().getTimeScales().getUTC();
         final List<EOPEntry> list = new ArrayList<EOPEntry>();
         for (double[] row : data) {
             final AbsoluteDate date =
@@ -192,15 +197,15 @@ public class Utils {
                                   Constants.ARC_SECONDS_TO_RADIANS * row[3],
                                   Constants.ARC_SECONDS_TO_RADIANS * row[4],
                                   equinox[0], equinox[1],
-                                  nro[0], nro[1], version));
+                                  nro[0], nro[1], version,
+                                  AbsoluteDate.createMJDDate((int) row[0], 0.0, utc)));
         }
         return list;
     }
 
     public static void setLoaders(final IERSConventions conventions, final List<EOPEntry> eop) {
 
-        clearFactoryMaps(FramesFactory.class);
-        clearFactoryMaps(TimeScalesFactory.class);
+        clearFactories();
 
         FramesFactory.addEOPHistoryLoader(conventions, new EOPHistoryLoader() {
             public void fillHistory(IERSConventions.NutationCorrectionConverter converter,

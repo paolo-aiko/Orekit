@@ -1,5 +1,5 @@
-/* Copyright 2002-2019 CS Systèmes d'Information
- * Licensed to CS Systèmes d'Information (CS) under one or more
+/* Copyright 2002-2020 CS Group
+ * Licensed to CS Group (CS) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * CS licenses this file to You under the Apache License, Version 2.0
@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import org.hipparchus.Field;
 import org.hipparchus.RealFieldElement;
 import org.hipparchus.geometry.euclidean.threed.FieldVector3D;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.ode.nonstiff.AdaptiveStepsizeFieldIntegrator;
 import org.hipparchus.ode.nonstiff.DormandPrince853FieldIntegrator;
 import org.hipparchus.util.Decimal64Field;
@@ -78,7 +79,7 @@ public class FieldDateDetectorTest {
         final FieldVector3D<T> velocity  = new FieldVector3D<>(zero.add(505.8479685), zero.add(942.7809215), zero.add(7435.922231));
         FieldAbsoluteDate<T> iniDate  = new FieldAbsoluteDate<>(field, 1969, 7, 28, 4, 0, 0.0, TimeScalesFactory.getTT());
         FieldOrbit<T> iniOrbit = new FieldEquinoctialOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                             FramesFactory.getEME2000(), iniDate, mu);
+                                                             FramesFactory.getEME2000(), iniDate, zero.add(mu));
         FieldSpacecraftState<T> initialState = new FieldSpacecraftState<>(iniOrbit);
         double[] absTolerance = {
             0.001, 1.0e-9, 1.0e-9, 1.0e-6, 1.0e-6, 1.0e-6, 0.001
@@ -109,7 +110,7 @@ public class FieldDateDetectorTest {
         final FieldVector3D<T> velocity  = new FieldVector3D<>(zero.add(505.8479685), zero.add(942.7809215), zero.add(7435.922231));
         FieldAbsoluteDate<T> iniDate  = new FieldAbsoluteDate<>(field, 1969, 7, 28, 4, 0, 0.0, TimeScalesFactory.getTT());
         FieldOrbit<T> iniOrbit = new FieldEquinoctialOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                             FramesFactory.getEME2000(), iniDate, mu);
+                                                             FramesFactory.getEME2000(), iniDate, zero.add(mu));
         FieldSpacecraftState<T> initialState = new FieldSpacecraftState<>(iniOrbit);
         double[] absTolerance = {
             0.001, 1.0e-9, 1.0e-9, 1.0e-6, 1.0e-6, 1.0e-6, 0.001
@@ -153,7 +154,7 @@ public class FieldDateDetectorTest {
         final FieldVector3D<T> velocity  = new FieldVector3D<>(zero.add(505.8479685), zero.add(942.7809215), zero.add(7435.922231));
         FieldAbsoluteDate<T> iniDate  = new FieldAbsoluteDate<>(field, 1969, 7, 28, 4, 0, 0.0, TimeScalesFactory.getTT());
         FieldOrbit<T> iniOrbit = new FieldEquinoctialOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                             FramesFactory.getEME2000(), iniDate, mu);
+                                                             FramesFactory.getEME2000(), iniDate, zero.add(mu));
         FieldSpacecraftState<T> initialState = new FieldSpacecraftState<>(iniOrbit);
         double[] absTolerance = {
             0.001, 1.0e-9, 1.0e-9, 1.0e-6, 1.0e-6, 1.0e-6, 0.001
@@ -191,7 +192,7 @@ public class FieldDateDetectorTest {
         final FieldVector3D<T> velocity  = new FieldVector3D<>(zero.add(505.8479685), zero.add(942.7809215), zero.add(7435.922231));
         FieldAbsoluteDate<T> iniDate  = new FieldAbsoluteDate<>(field, 1969, 7, 28, 4, 0, 0.0, TimeScalesFactory.getTT());
         FieldOrbit<T> iniOrbit = new FieldEquinoctialOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                             FramesFactory.getEME2000(), iniDate, mu);
+                                                             FramesFactory.getEME2000(), iniDate, zero.add(mu));
         FieldSpacecraftState<T> initialState = new FieldSpacecraftState<>(iniOrbit);
         double[] absTolerance = {
             0.001, 1.0e-9, 1.0e-9, 1.0e-6, 1.0e-6, 1.0e-6, 0.001
@@ -232,7 +233,7 @@ public class FieldDateDetectorTest {
         final FieldVector3D<T> velocity  = new FieldVector3D<>(zero.add(505.8479685), zero.add(942.7809215), zero.add(7435.922231));
         FieldAbsoluteDate<T> iniDate  = new FieldAbsoluteDate<>(field, 1969, 7, 28, 4, 0, 0.0, TimeScalesFactory.getTT());
         FieldOrbit<T> iniOrbit = new FieldEquinoctialOrbit<>(new FieldPVCoordinates<>(position, velocity),
-                                                             FramesFactory.getEME2000(), iniDate, mu);
+                                                             FramesFactory.getEME2000(), iniDate, zero.add(mu));
         FieldSpacecraftState<T> initialState = new FieldSpacecraftState<>(iniOrbit);
         double[] absTolerance = {
             0.001, 1.0e-9, 1.0e-9, 1.0e-6, 1.0e-6, 1.0e-6, 0.001
