@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="7.852" tests="60" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
+    <property name="java.vm.version" value="25.282-b08"/>
+    <property name="java.vm.vendor" value="Private Build"/>
+    <property name="maven.multiModuleProjectDirectory" value="/home/paolo/codes/constellation-manager/orekit/py_orekit"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/home/paolo/codes/constellation-manager/orekit/py_orekit"/>
+    <property name="java.runtime.version" value="1.8.0_282-8u282-b08-0ubuntu1~20.04-b08"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Linux"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="maven.conf" value="/usr/share/maven/conf"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="5.4.72-microsoft-standard-WSL2"/>
+    <property name="library.jansi.path" value="/usr/share/maven/lib/jansi-native"/>
+    <property name="user.home" value="/home/paolo"/>
+    <property name="user.timezone" value="Europe/Rome"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="paolo"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/usr/lib/jvm/java-8-openjdk-amd64/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.8.0_282"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jfr.jar:/usr/lib/jvm/java-8-openjdk-amd64/jre/classes"/>
+    <property name="java.vendor" value="Private Build"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="testException" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.008"/>
+  <testcase name="testShiftCartesianHyperbolicEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.357"/>
+  <testcase name="testNotInitialised1" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.001"/>
+  <testcase name="testNotInitialised2" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.001"/>
+  <testcase name="testStopEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.006"/>
+  <testcase name="testShiftCircularTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.21"/>
+  <testcase name="testShiftKeplerianHyperbolicEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.313"/>
+  <testcase name="testShiftKeplerianEllipticTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.281"/>
+  <testcase name="testShiftKeplerianHyperbolicTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.245"/>
+  <testcase name="testShiftCartesianEllipticEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.234"/>
+  <testcase name="testShiftCartesianEllipticMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.249"/>
+  <testcase name="testPropagationTypesElliptical" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.274"/>
+  <testcase name="testEventDetectionBug" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.02"/>
+  <testcase name="testShiftKeplerianEllipticTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.236"/>
+  <testcase name="testShiftCartesianHyperbolicMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.191"/>
+  <testcase name="testDeprecatedMethods" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.002"/>
+  <testcase name="testShiftKeplerianEllipticMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.218"/>
+  <testcase name="testShiftCircularTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.18"/>
+  <testcase name="testShiftCircularMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.165"/>
+  <testcase name="testShiftCartesianEllipticTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.15"/>
+  <testcase name="testResetAdditionalStateEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.026"/>
+  <testcase name="testPropagationTypesHyperbolic" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.11"/>
+  <testcase name="testShiftKeplerianHyperbolicTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.169"/>
+  <testcase name="testShiftKeplerianHyperbolicMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.159"/>
+  <testcase name="testShiftCartesianHyperbolicTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.167"/>
+  <testcase name="testShiftCircularEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.168"/>
+  <testcase name="testShiftCircularEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.168"/>
+  <testcase name="testEphemerisAdditionalState" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.022"/>
+  <testcase name="testNoExtrapolation" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.001"/>
+  <testcase name="testShiftCartesianEllipticTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.162"/>
+  <testcase name="testShiftCartesianEllipticMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.139"/>
+  <testcase name="testShiftEquinoctialEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.141"/>
+  <testcase name="testContinueEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.014"/>
+  <testcase name="testShiftKeplerianEllipticEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.183"/>
+  <testcase name="testShiftEquinoctialEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.158"/>
+  <testcase name="testShiftCartesianHyperbolicTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.166"/>
+  <testcase name="testResetStateEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.014"/>
+  <testcase name="testShiftCartesianHyperbolicMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.164"/>
+  <testcase name="testEventAtEndOfEphemeris" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.003"/>
+  <testcase name="testShiftCartesianHyperbolicEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.137"/>
+  <testcase name="testShiftEquinoctialMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.166"/>
+  <testcase name="testCartesian" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.011"/>
+  <testcase name="testShiftEquinoctialTrueWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.14"/>
+  <testcase name="testShiftCartesianEllipticEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.157"/>
+  <testcase name="testAdditionalStateEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.004"/>
+  <testcase name="testShiftEquinoctialMeanWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.151"/>
+  <testcase name="testEphemerisDates" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.306"/>
+  <testcase name="testResetDerivativesEvent" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.015"/>
+  <testcase name="testCloseEventDates" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.003"/>
+  <testcase name="testEventAtBeginningOfEphemeris" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.004"/>
+  <testcase name="testShiftKeplerianEllipticEcentricWithDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.188"/>
+  <testcase name="testIssue157" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.004"/>
+  <testcase name="testEphemerisDatesBackward" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.183"/>
+  <testcase name="testKepler" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.008"/>
+  <testcase name="testShiftEquinoctialTrueWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.19"/>
+  <testcase name="testShiftCircularMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.173"/>
+  <testcase name="testShiftKeplerianEllipticMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.162"/>
+  <testcase name="testShiftKeplerianHyperbolicMeanWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.175"/>
+  <testcase name="testEphemerisGenerationIssue14" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.04"/>
+  <testcase name="testShiftKeplerianHyperbolicEccentricWithoutDerivatives" classname="org.orekit.propagation.numerical.FieldNumericalPropagatorTest" time="0.156"/>
+</testsuite>

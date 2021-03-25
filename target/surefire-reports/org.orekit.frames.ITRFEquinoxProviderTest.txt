@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.frames.ITRFEquinoxProviderTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.802 s - in org.orekit.frames.ITRFEquinoxProviderTest

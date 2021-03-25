@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.propagation.integration.FieldIntegratedEphemerisTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.308 s - in org.orekit.propagation.integration.FieldIntegratedEphemerisTest

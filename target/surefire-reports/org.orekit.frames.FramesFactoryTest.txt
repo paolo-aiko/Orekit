@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.frames.FramesFactoryTest
+-------------------------------------------------------------------------------
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 56.463 s - in org.orekit.frames.FramesFactoryTest

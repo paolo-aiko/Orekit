@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.propagation.semianalytical.dsst.utilities.hansen.HansenThirdBodyLinearTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.111 s - in org.orekit.propagation.semianalytical.dsst.utilities.hansen.HansenThirdBodyLinearTest

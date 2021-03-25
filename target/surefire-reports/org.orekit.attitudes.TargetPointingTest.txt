@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.attitudes.TargetPointingTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.315 s - in org.orekit.attitudes.TargetPointingTest

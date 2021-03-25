@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.estimation.measurements.TurnAroundRangeTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.548 s - in org.orekit.estimation.measurements.TurnAroundRangeTest

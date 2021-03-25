@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.propagation.numerical.NumericalPropagatorTest
+-------------------------------------------------------------------------------
+Tests run: 63, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.828 s - in org.orekit.propagation.numerical.NumericalPropagatorTest

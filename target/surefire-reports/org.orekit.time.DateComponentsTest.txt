@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.orekit.time.DateComponentsTest
+-------------------------------------------------------------------------------
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.168 s - in org.orekit.time.DateComponentsTest
