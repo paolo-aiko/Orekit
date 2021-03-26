@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.orekit.bodies.PredefinedIAUPolesTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.14 s - in org.orekit.bodies.PredefinedIAUPolesTest

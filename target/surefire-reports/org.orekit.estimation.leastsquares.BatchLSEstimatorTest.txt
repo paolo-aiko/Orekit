@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.orekit.estimation.leastsquares.BatchLSEstimatorTest
--------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 121.706 s - in org.orekit.estimation.leastsquares.BatchLSEstimatorTest

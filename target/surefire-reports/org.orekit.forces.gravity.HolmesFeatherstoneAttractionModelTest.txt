@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.orekit.forces.gravity.HolmesFeatherstoneAttractionModelTest
--------------------------------------------------------------------------------
-Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.594 s - in org.orekit.forces.gravity.HolmesFeatherstoneAttractionModelTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.orekit.frames.EOPHistoryTest
--------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.745 s - in org.orekit.frames.EOPHistoryTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.orekit.orbits.EquinoctialOrbitTest
--------------------------------------------------------------------------------
-Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.224 s - in org.orekit.orbits.EquinoctialOrbitTest
